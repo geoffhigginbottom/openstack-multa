@@ -1,0 +1,61 @@
+---
+
+- name: Get the ID for '{{ project_1 }}' Project
+  os_project_facts:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: 'UI_Demo'
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - user
+
+- name: Debug Project Facts
+  debug:
+    var: openstack_projects 
+    verbosity: 2
+  tags:
+    - user
+
+- name: Create '{{ my_cloud_username }}'
+  os_user:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    state: present
+    name: '{{ my_cloud_username }}'
+    password: '{{ my_cloud_password }}'
+    update_password: on_create
+    default_project: '{{ project_1 }}'
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - user
+
+- name: Assign Roles
+  os_user_role:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    user: '{{ my_cloud_username }}'
+    role: '{{ item.role }}'
+    project: '{{ item.project }}'
+  with_items:
+    - { role: '_member_', project: '{{ project_1 }}'}
+    - { role: 'swiftoperator', project: '{{ project_1 }}'}
+    - { role: '_member_', project: '{{ project_2 }}'}
+    - { role: 'swiftoperator', project: '{{ project_2 }}'}
+    - { role: '_member_', project: '{{ project_3 }}'}
+    - { role: 'swiftoperator', project: '{{ project_3 }}'}
+    - { role: '_member_', project: '{{ project_4 }}'}
+    - { role: 'swiftoperator', project: '{{ project_4 }}'}
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - user
+
+# Following is required due to a bug in os_user module which is failing to set the default project for a user
+- name: Fix default project
+  shell: source /ansible/openrc && openstack user set --project '{{ project_1 }}' '{{ my_cloud_username }}'
+  args:
+    executable: /bin/bash
+  tags:
+    - user

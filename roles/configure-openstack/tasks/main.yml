@@ -1,0 +1,13 @@
+---
+
+- import_tasks: create_projects.yml
+- import_tasks: create_users.yml
+- import_tasks: create_provider_network.yml
+- import_tasks: create_corp_network.yml
+- import_tasks: add_cirros_image.yml
+- import_tasks: add_ubuntu_image.yml
+- import_tasks: create_flavors.yml
+# - import_tasks: 
+# - import_tasks: 
+# - import_tasks: 
+# - import_tasks: 

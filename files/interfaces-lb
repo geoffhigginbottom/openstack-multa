@@ -1,0 +1,59 @@
+### Ansible managed file ### test
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# Source interfaces
+# Please check /etc/network/interfaces.d before changing this file
+# as interfaces may have been defined in /etc/network/interfaces.d
+# See LP: #1262951
+source /etc/network/interfaces.d/*.cfg
+
+# Label public
+auto eth0
+iface eth0 inet static
+    address {{ ansible_eth0.ipv4.address }}
+    netmask {{ ansible_eth0.ipv4.netmask }}
+    gateway {{ ansible_default_ipv4.gateway }}
+iface eth0 inet6 static
+    address {{ ansible_default_ipv6.address }}
+    netmask {{ ansible_default_ipv6.prefix }}
+    gateway {{ ansible_default_ipv6.gateway }}
+    dns-nameservers {{ dns_servers.stdout }}
+
+# Label private
+auto eth1
+iface eth1 inet static
+    address {{ ansible_eth1.ipv4.address }}
+    netmask {{ ansible_eth1.ipv4.netmask }}
+    dns-nameservers {{ dns_servers.stdout }}
+    post-up route add -net 10.176.0.0 netmask 255.240.0.0 gw {{ service_net_gw.stdout }} || true
+    pre-down route del -net 10.176.0.0 netmask 255.240.0.0 gw {{ service_net_gw.stdout }} || true
+    post-up route add -net 10.208.0.0 netmask 255.240.0.0 gw {{ service_net_gw.stdout }} || true
+    pre-down route del -net 10.208.0.0 netmask 255.240.0.0 gw {{ service_net_gw.stdout }} || true
+
+# Label Encapuslation Network
+auto eth2
+iface eth2 inet static
+    address {{ ansible_eth2.ipv4.address }}
+    netmask {{ ansible_eth2.ipv4.netmask }}
+
+# Encapsulation of br-mgmt with VXLAN
+auto encap-mgmt
+iface encap-mgmt inet manual
+    pre-up ip link add encap-mgmt type vxlan id 236 group 239.0.0.236 dev eth2 ttl 5 dstport 4789 || true
+    up ip link set $IFACE up
+    down ip link set $IFACE down
+    post-down ip link del encap-mgmt || true
+
+# Container bridge (br-mgmt)
+auto br-mgmt
+iface br-mgmt inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports encap-mgmt
+    offload-sg off
+    address {{ ansible_eth3.ipv4.address }}
+    netmask {{ ansible_eth3.ipv4.netmask }}

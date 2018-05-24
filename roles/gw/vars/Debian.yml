@@ -1,0 +1,3 @@
+---
+squid_pkg_name: squid3
+squid_apt_conf_file: "/etc/apt/apt.conf.d/01proxy"

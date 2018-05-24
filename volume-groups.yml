@@ -1,0 +1,5 @@
+---
+- hosts: volume-groups
+
+  roles:
+    - volume-groups

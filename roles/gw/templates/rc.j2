@@ -1,0 +1,34 @@
+#!/bin/sh -e
+
+# Default policy to drop all incoming packets
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+
+# Accept incoming packets from localhost and the LAN interfaces (via the VXLAN Encapsulation NIC eth2)
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -i eth1  -j ACCEPT
+iptables -A INPUT -i eth2  -j ACCEPT
+iptables -A INPUT -i br-mgmt  -j ACCEPT
+iptables -A INPUT -i br-flat  -j ACCEPT
+iptables -A INPUT -i br-vxlan  -j ACCEPT
+
+# Accept incoming packets from the WAN if the router initiated the connection
+iptables -A INPUT -i eth0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Accept incoming SSH Packets
+iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+
+# Forward LAN packets to the WAN
+iptables -A FORWARD -i br-flat -o eth0 -j ACCEPT
+
+# Forward WAN packets to the LAN if the LAN initiated the connection
+iptables -A FORWARD -i eth0 -o br-flat -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Allow SSH traffic outbound for established SSH connections (only required if OUTPUT policy is not set to ACCEPT)
+#iptables -A OUTPUT -p tcp --sport 22 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+
+# NAT traffic going out the WAN interface
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+# rc.local needs to exit with 0
+exit 0

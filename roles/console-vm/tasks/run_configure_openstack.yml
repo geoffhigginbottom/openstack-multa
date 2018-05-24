@@ -1,0 +1,24 @@
+---
+
+- name: Run configure-openstack on Console VM
+  shell: ansible-playbook configure-openstack.yml
+  args:
+    chdir: /ansible
+  changed_when: false
+  tags:
+    - run
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: OpenStack Configuration Complete
+    body: Automatic configuration of OpenStack completed
+  when: send_mail | bool
+  tags:
+    - mail

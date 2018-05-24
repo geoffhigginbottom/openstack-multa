@@ -1,0 +1,12 @@
+---
+# defaults file for squid
+squid_server_mode: true
+squid_conf_dir: /etc/squid/
+squid_maximum_object_size: 500 # in MB ...
+squid_allow_access_all: true
+squid_proxy_protocol: http
+squid_proxy_host: "{{ proxy_protocol | d('http') }}://{{ proxy_server | d('127.0.0.1') }}"
+squid_proxy_port: 8080
+
+allow_private_cidr: true
+squid_cache_dir_Mbytes: '5000'

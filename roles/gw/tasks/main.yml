@@ -1,0 +1,20 @@
+---
+
+- name: Configure Ubuntu Router
+  import_tasks: ubuntu_router.yml
+  when: ansible_os_family == "Debian"
+  tags:
+    - router
+
+# Detect the version of OS and load the appropriate vars family
+- name: "Include Debain / Redhat OS vars"
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+    - squid
+
+# Install Squid Server but only if squid_server_mode exists and is set to true
+- name: "Install server"
+  import_tasks: "squid-server-install.yml"
+  when: (squid_server_mode is defined) and (squid_server_mode | bool)
+  tags:
+    - squid

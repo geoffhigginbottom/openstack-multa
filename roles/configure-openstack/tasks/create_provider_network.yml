@@ -1,0 +1,34 @@
+---
+
+- os_network:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    provider_network_type: flat
+    provider_physical_network: flat
+    state: present
+    name: ext_network
+    external: true
+    shared: true
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - provider
+
+
+- os_subnet:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    state: present
+    network_name: ext_network
+    name: ext_network_subnet
+    cidr: 172.29.252.0/22
+    allocation_pool_start: 172.29.253.1
+    allocation_pool_end: 172.29.253.254
+    gateway_ip: "{{ gateway_ip }}"
+    dns_nameservers:
+       - 8.8.8.8
+       - 8.8.4.4
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - provider

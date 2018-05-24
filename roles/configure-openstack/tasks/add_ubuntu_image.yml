@@ -1,0 +1,26 @@
+---
+
+- name: Download Ubuntu Image
+  get_url:
+    url: http://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img
+    dest: /ansible/
+  tags:
+    - ubuntu
+
+- name: Install Ubuntu Image
+  os_image:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: ubuntu-14.04-image
+    container_format: bare
+    disk_format: qcow2
+    state: present
+    is_public: yes
+    filename: trusty-server-cloudimg-amd64-disk1.img
+    properties:
+      cpu_arch: x86_64
+      distro: ubuntu
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - ubuntu

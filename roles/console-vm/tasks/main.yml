@@ -1,0 +1,179 @@
+---
+
+# - name: Use facts module to get latest information
+#   setup:
+#   tags:
+#     - facts
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  when: ansible_os_family == "Debian"
+  tags: 
+    - packages
+    - ubuntu
+
+- name: Install Packages
+  package: name={{ item }} state=present
+  with_items:
+   - software-properties-common
+   - ubuntu-desktop
+   - x11vnc
+   - python-openstackclient
+  when: ansible_os_family == "Debian"
+  tags: 
+    - packages
+
+- name: Setup Console User
+  user:
+    name: '{{ console_user_name }}'
+    comment: '{{ console_user_comment }}'
+    groups: sudo
+    password: "{{ console_user_pwd }}"
+    # password: $6$/NhR3b1i338$0aGHE.aMEvDDZGurVI7YH1qs3iIlOw9xf2g7f0elx4qexprz79Sq.IX9dHGvwRUJ6zuYkDuZAgyAvXl4QAWQh/
+  tags:
+    - console-user
+
+# - name: Setup Console User
+#   user:
+#     name: '{{ console_user_name }}'
+#     state: absent
+#   tags:
+#     - console-user
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  tags: 
+    - update_ansible
+
+- name: Add PPA Repo
+  apt_repository: 
+    repo: 'ppa:ansible/ansible'
+  tags: 
+    - packages
+
+- name: Install Pip
+  apt: name={{ item }} state=present
+  with_items:
+    - python-pip
+    - python3-pip
+  when: ansible_os_family == "Debian"
+  tags:
+    - pip
+    - ubuntu
+
+# - name: Install Shade
+#   pip:
+#     name: shade
+#     state: forcereinstall
+#   tags:
+#     - pip
+#     - ubuntu
+#     - shade
+
+# Ansible PIP module was failing to install shade so had to revert to using command line
+- name: Install Shade
+  command: pip install shade
+  tags:
+    - shade
+
+- name: Install Ansible
+  package:
+    name: ansible
+    state: present
+  tags:
+    - packages
+    - ubuntu
+
+- name: Upgrade CentOS
+  yum:
+    name: '*'
+    state: latest
+  when: ansible_os_family == "RedHat"
+  tags:
+    - upgrade
+    - upgrade_centos
+    - centos
+
+- name: Upgrade Ubuntu
+  apt: upgrade=dist
+  when: ansible_os_family == "Debian"
+  tags:
+    - upgrade
+    - upgrade_ubuntu
+    - ubuntu
+
+- name: Is Reboot Required
+  stat: 
+    path: /var/run/reboot-required.pkgs
+  register: stat_result
+  tags:
+    - upgrade
+    - networking
+
+- name: Test stat results
+  debug:
+    var: stat_result
+    verbosity: 2
+  tags:
+    - upgrade
+    - networking
+
+- name: Reboot Required?
+  debug:
+    msg: "Reboot required"
+  when: stat_result.stat.exists == True
+  tags:
+    - upgrade
+    - networking
+
+- name: Restart Console
+  shell: sleep 2 && shutdown -r now "Ansible triggered restart"
+  async: 1
+  poll: 0
+  become: true
+  ignore_errors: true
+  when: stat_result.stat.exists == True
+  tags:
+    - upgrade
+    - networking
+
+- name: Wait for Console to reboot
+  local_action: shell ansible -m ping {{ inventory_hostname }}
+  register: result
+  until: result.rc == 0
+  retries: 30
+  delay: 10
+  become: false
+  when: stat_result.stat.exists == True
+  tags:
+    - upgrade
+    - networking
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Console Initial Setup
+    body: The initial configuartion of the console VM has completed, now preparing it for use with OpenStack
+  when: send_mail | bool
+  tags:
+    - mail
+
+- import_tasks: roles/console-vm/tasks/prepare_console.yml
+- import_tasks: roles/console-vm/tasks/run_configure_openstack.yml

@@ -1,0 +1,24 @@
+---
+
+# Generate a key for the root account so it can be used by openstack-ansible when connecting to the other hosts
+
+- user:
+    name: root
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Key Generated
+    body: Key generated for root user
+  when: send_mail | bool
+  tags:
+    - mail

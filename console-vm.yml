@@ -1,0 +1,5 @@
+---
+- hosts: consoles
+    
+  roles:
+    - console-vm

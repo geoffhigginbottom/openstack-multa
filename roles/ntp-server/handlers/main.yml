@@ -1,0 +1,11 @@
+---
+
+- name: restart chrony
+  systemd:
+      state: restarted
+      name: chrony
+
+- name: restart chronyd
+  systemd:
+      state: restarted
+      name: chronyd

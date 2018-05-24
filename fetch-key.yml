@@ -1,0 +1,6 @@
+---
+- hosts: deployment-host
+
+  roles:
+    - fetch-key
+  

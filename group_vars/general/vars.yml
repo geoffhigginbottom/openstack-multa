@@ -1,0 +1,51 @@
+---
+
+osa_repo: 'https://github.com/openstack/openstack-ansible.git'
+# osa_version: stable/queens
+osa_version: stable/pike
+osa_destination: /opt/openstack-ansible
+git_force: no
+
+controller_lxc_vg: /dev/xvde
+storage_cinder_vg: /dev/xvde
+compute_cinder_vg: /dev/xvde
+
+# Console Settings
+my_cloud_name: osa_test_env
+console_user_name: console-user
+console_user_comment: "Console User"
+
+# Configure Openstack Settings
+my_cloud_username: demo-user1 # Used to create a user account on the Cloud
+my_cloud_password: '{{ vault_my_cloud_password }}' # Password for the above account, stored in the vault.yml file
+project_1: UI_Demo
+project_1_desc: UI Demo Project
+project_2: Heat_Demo
+project_2_desc: Heat Demo Project
+project_3: Terraform_Demo
+project_3_desc: Terraform Demo Project
+project_4: Ansible_Demo
+project_4_desc: Ansible Demo Project
+
+## Only enable this variable when re-deploying a node after the osa-prep.yml playbook has been
+## run against controller1 as this will have removed the eth3 ip address which is referenced 
+## in the ntp-client.yml playbook / template as it is normally run before the osa-prep.yml playbook
+## IMPORTANT - you need to update the IP Address to the correct value - It's the br_mgmt IP of controller1
+## TODO - Add code to handle this automatically!
+# ntp_server_ip: 172.29.236.11
+
+
+# VPN Settings
+vpn_network: 172.27.224.0 
+vpn_netmask: 255.255.240.0
+vpn_interface: br-flat
+
+# Status Mail Settings - values are stored in encrypted vault file
+send_mail: true
+host: '{{ vault_host }}'
+port: '{{ vault_port }}'
+secure: '{{ vault_secure }}'
+username: '{{ vault_username }}'
+password: '{{ vault_password }}'
+from: '{{ vault_from }}'
+to: '{{ vault_to }}'

@@ -1,0 +1,66 @@
+---
+- name: "Install packadges"
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ squid_pkg_name }}"
+  tags:
+    - squid
+
+- name: "Configure squid"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ squid_conf_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - squid.conf
+  register: sconf
+  tags:
+    - squid
+
+# see -> https://github.com/Homebrew/legacy-homebrew/issues/41489
+- name: "run squid -z"
+  shell: >
+    squid -z
+  when: ansible_pkg_mgr == "yum"
+  tags:
+    - squid
+
+- name: "Start service"
+  service:
+    name: squid
+    state: restarted
+    enabled: yes
+  register: result
+  until: '"failed" not in result'
+  retries: 10
+  delay: 5
+  tags:
+    - squid
+
+- name: "Wait for squid port to come up"
+  wait_for:
+    port: "{{ squid_proxy_port }}"
+    timeout: 60
+    host: 0.0.0.0
+  tags:
+    - squid
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Squid Installed
+    body: Squid has been installed
+  when: send_mail | bool
+  tags:
+    - squid
+    - mail

@@ -1,0 +1,6 @@
+---
+- hosts: general:!deployment-host
+
+  roles:
+    - distribute-key
+  

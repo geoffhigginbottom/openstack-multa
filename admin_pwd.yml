@@ -1,0 +1,15 @@
+---
+
+- hosts: localhost
+  become: false
+
+  tasks:
+
+  - name: Obtain Admin Password
+    delegate_to: controller1
+    shell: "grep keystone_auth_admin_password /etc/openstack_deploy/user_secrets.yml | awk '{print $2}'"
+    register: admin_pwd
+
+  - name: Display Admin Password
+    debug:
+      msg: "Admin Password is {{ admin_pwd.stdout }}"

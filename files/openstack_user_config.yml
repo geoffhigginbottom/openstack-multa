@@ -1,0 +1,200 @@
+---
+
+cidr_networks:
+  container: 172.29.236.0/24
+  tunnel: 172.29.240.0/24
+  storage: 172.29.244.0/24
+
+used_ips:
+  - "172.29.236.1,172.29.236.50"
+  - "172.29.240.1,172.29.240.50"
+  - "172.29.244.1,172.29.244.50"
+  - "172.29.248.1,172.29.248.50"
+
+global_overrides:
+  internal_lb_vip_address: "{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  external_lb_vip_address: "{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }}"
+  tunnel_bridge: "br-vxlan"
+  management_bridge: "br-mgmt"
+  provider_networks:
+    - network:
+        group_binds:
+          - all_containers
+          - hosts
+        type: "raw"
+        container_bridge: "br-mgmt"
+        container_interface: "eth1"
+        container_type: "veth"
+        container_mtu: "1450" # Requied as we are encapsulating this traffic over a VXLAN
+        ip_from_q: "container"
+        is_container_address: true
+        is_ssh_address: true
+    - network:
+        group_binds:
+          - glance_api
+          - cinder_api
+          - cinder_volume
+          - nova_compute
+          - swift_proxy
+        type: "raw"
+        container_bridge: "br-storage"
+        container_type: "veth"
+        container_mtu: "1450" # Requied as we are encapsulating this traffic over a VXLAN
+        container_interface: "eth2"
+        ip_from_q: "storage"
+    - network:
+        group_binds:
+          - neutron_linuxbridge_agent
+        container_bridge: "br-vxlan"
+        container_type: "veth"
+        container_mtu: "1450" # Requied as we are encapsulating this traffic over a VXLAN
+        container_interface: "eth10"
+        ip_from_q: "tunnel"
+        type: "vxlan"
+        range: "1:1000"
+        net_name: "vxlan"
+    # - network:
+    #     group_binds:
+    #       - neutron_linuxbridge_agent
+    #     container_bridge: "br-vlan"
+    #     container_type: "veth"
+    #     container_mtu: "1450" # Requied as we are encapsulating this traffic over a VXLAN
+    #     container_interface: "eth11"
+    #     type: "vlan"
+    #     range: "1:1"
+    #     net_name: "vlan"
+    - network:
+        group_binds:
+          - neutron_linuxbridge_agent
+        container_bridge: "br-flat"
+        container_type: "veth"
+        container_interface: "eth12"
+        host_bind_override: "eth5" # This needs to be an interface on the compute hosts, controllers & console
+        type: "flat"
+        net_name: "flat"
+
+
+# Level: shared-infra_hosts (required)
+# List of target hosts on which to deploy shared infrastructure services
+# including the Galera SQL database cluster, RabbitMQ, and Memcached. Recommend
+# three minimum target hosts for these services.
+shared-infra_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: repo-infra_hosts (required)
+# apt cache, python packages, etc
+# List of target hosts on which to deploy the package repository. Recommend
+# minimum three target hosts for this service. Typically contains the same
+# target hosts as the 'shared-infra_hosts' level.
+repo-infra_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: os-infra_hosts (required)
+# List of target hosts on which to deploy the glance API, nova API, heat API,
+# and horizon. Recommend three minimum target hosts for these services.
+# Typically contains the same target hosts as 'shared-infra_hosts' level.
+os-infra_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: identity_hosts (required)
+# List of target hosts on which to deploy the keystone service. Recommend
+# three minimum target hosts for this service. Typically contains the same
+# target hosts as the 'shared-infra_hosts' level.
+identity_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: network_hosts (required)
+# List of target hosts on which to deploy neutron services. Recommend three
+# minimum target hosts for this service. Typically contains the same target
+# hosts as the 'shared-infra_hosts' level.
+network_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: compute_hosts (optional)
+# List of target hosts on which to deploy the nova compute service. Recommend
+# one minimum target host for this service. Typically contains target hosts
+# that do not reside in other levels.
+compute_hosts:
+  compute1:
+    ip: "{{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  compute2:
+    ip: "{{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  compute3:
+    ip: "{{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: ironic-compute_hosts (optional)
+# List of target hosts on which to deploy the nova compute service for Ironic.
+# Recommend one minimum target host for this service. Typically contains target
+# hosts that do not reside in other levels.
+
+
+
+# Level: storage-infra_hosts (required)
+# List of target hosts on which to deploy the cinder API. Recommend three
+# minimum target hosts for this service. Typically contains the same target
+# hosts as the 'shared-infra_hosts' level.
+storage-infra_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: storage_hosts (required)
+# List of target hosts on which to deploy the cinder volume service. Recommend
+# one minimum target host for this service. Typically contains target hosts
+# that do not reside in other levels.
+storage_hosts:
+  cinder1:
+    ip: "{{ hostvars['cinder1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    container_vars:
+      cinder_storage_availability_zone: nova
+      cinder_default_availability_zone: nova
+      cinder_backends:
+        lvm:
+          volume_backend_name: LVM_iSCSI
+          volume_driver: cinder.volume.drivers.lvm.LVMVolumeDriver
+          volume_group: cinder-volumes
+          iscsi_ip_address: "{{ hostvars['cinder1']['ansible_br_storage']['ipv4']['address'] }}"
+        limit_container_types: cinder_volume
+
+# Level: log_hosts (required)
+# List of target hosts on which to deploy logging services. Recommend
+# one minimum target host for this service.
+log_hosts:
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+# Level: haproxy_hosts (optional)
+# List of target hosts on which to deploy HAProxy. Recommend at least one
+# target host for this service if hardware load balancers are not being
+# used.
+haproxy_hosts:
+  lb1:
+    ip: "{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"

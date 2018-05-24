@@ -1,0 +1,258 @@
+---
+
+- name: Check Boostrap Status
+  stat:
+    path: /opt/ansible-runtime/bin/
+  register: bootstrap
+  tags: 
+    - bootstrap-ansible
+
+- debug:
+    var: bootstrap
+    verbosity: 2
+  tags: 
+    - bootstrap-ansible
+
+- name: Gather facts for gw
+  become: no
+  delegate_to: localhost
+  shell: ansible gw -m setup
+  tags:
+    - facts
+
+- name: Bootstrap Ansible
+  shell: ./scripts/bootstrap-ansible.sh
+  args:
+    chdir: /opt/openstack-ansible
+  environment:
+    http_proxy: http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080
+  when: bootstrap.stat.exists == false
+  tags: 
+    - bootstrap-ansible
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Bootstrap Complete
+    body: Ansible Bootstrap has been completed
+  when: send_mail | bool
+  tags:
+    - mail
+
+# Copy the contents of /opt/openstack-ansible/etc/openstack_deploy to /etc/ - note there is no ansible module which
+# can recursively copy folders and their content within the same host so we have to use rsync
+
+- name: Set Fact
+  set_fact:
+    rsync_dry_run: "--dry-run"
+  when: ansible_check_mode
+  tags: 
+    - rsync
+
+# Check to see if the user_secrets file exists
+- name: Check user_secrets
+  shell: "grep keystone_auth_admin_password /etc/openstack_deploy/user_secrets.yml | awk '{print $2}'"
+  register: user_secrets
+  no_log: true
+  tags: 
+    - rsync 
+
+- debug:
+    var: user_secrets
+    verbosity: 2
+  tags: 
+    - rsync
+
+- name: Copy openstack_deploy to etc
+  shell: rsync --itemize-changes --archive {{ rsync_dry_run | default('') }} /opt/openstack-ansible/etc/openstack_deploy /etc/
+  check_mode: no
+  register: rsync_result
+  changed_when: rsync_result.stdout != ''
+  when: user_secrets.stdout == ""
+  tags: 
+    - rsync
+
+- name: Gather facts
+  become: no
+  delegate_to: localhost
+  shell: ansible all -m setup
+  tags:
+    - facts
+    - user_config
+
+- name: Create openstack_user_config.yml from template
+  template:
+    src: files/openstack_user_config.yml
+    dest: /etc/openstack_deploy/openstack_user_config.yml
+    backup: yes
+  tags:
+    - user_config
+
+# Check to see if the user_secrets has already been populated
+- name: Check user_secrets
+  shell: "grep horizon_secret_key /etc/openstack_deploy/user_secrets.yml | awk '{print $2}'"
+  register: user_secrets
+  no_log: true
+  tags: 
+    - user_secrets
+
+- debug:
+    var: user_secrets
+    verbosity: 2
+  tags: 
+    - user_secrets
+
+- name: Generate User Secrets
+  shell: python pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
+  args:
+    chdir: /opt/openstack-ansible/scripts
+  when: user_secrets.stdout == ""
+  tags: 
+    - user_secrets
+
+# Obtain the glance service password for insertion into the user_variables.yml
+- name: Get Glance Password
+  shell: "grep glance_service_password /etc/openstack_deploy/user_secrets.yml | awk '{print $2}'"
+  register: user_variables
+  # no_log: true
+  tags: 
+    - user_variables
+
+- debug:
+    var: user_variables.stdout
+    verbosity: 2
+  tags: 
+    - user_variables
+
+- name: Create user_variables.yml from template
+  template:
+    src: files/user_variables.yml
+    dest: /etc/openstack_deploy/user_variables.yml
+    backup: yes
+  tags:
+    - user_variables
+
+- name: Create cinder.yml from template
+  template:
+    src: files/cinder.yml
+    dest: /etc/openstack_deploy/env.d/cinder.yml
+    backup: yes
+  tags:
+    - cinder
+
+- name: Create swift.yml from template
+  template:
+    src: files/swift.yml
+    dest: /etc/openstack_deploy/conf.d/swift.yml
+    backup: yes
+  tags:
+    - swift
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Running setup-hosts
+    body: setup-hosts.yml has commenced
+  when: send_mail | bool
+  tags:
+    - mail
+
+- name: Run setup-hosts.yml
+  shell: openstack-ansible setup-hosts.yml
+  args:
+    chdir: /opt/openstack-ansible/playbooks
+    creates: /var/log/lxc/lxc-monitord.log
+  tags: 
+    - setup_hosts
+
+### Following added to replace the "reloaded" option with "restarted" as this was causing the 
+### os-nova-install.yml play to fail with an error as the services would not reload, but would restart
+- name: Fix issue in os-nova-install.yml step 1
+  lineinfile:
+    path: /opt/openstack-ansible/playbooks/os-nova-install.yml
+    regexp: '        service_action: "reloaded"'
+    line: '#        service_action: "reloaded"'
+  tags: 
+    - os-nova-install
+
+- name: Fix issue in os-nova-install.yml step 2
+  lineinfile:
+    path: /opt/openstack-ansible/playbooks/os-nova-install.yml
+    regexp: '        service_action: "restarted" # Replaced reloaded with restarted as services were failing to reload'
+    insertbefore: 'service_negate'
+    line: '        service_action: "restarted" # Replaced reloaded with restarted as services were failing to reload'
+  tags: 
+    - os-nova-install
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Running setup-infrastructure
+    body: setup-infrastructure.yml has commenced
+  when: send_mail | bool
+  tags:
+    - mail
+- name: Run setup-infrastructure.yml
+  shell: openstack-ansible setup-infrastructure.yml
+  args:
+    chdir: /opt/openstack-ansible/playbooks
+    #creates: /var/log/lxc
+  tags: 
+    - setup_infrastructure
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Running setup-penstack
+    body: setup-openstack.yml has commenced
+  when: send_mail | bool
+  tags:
+    - mail
+
+- name: Run setup-openstack.yml
+  shell: openstack-ansible setup-openstack.yml
+  args:
+    chdir: /opt/openstack-ansible/playbooks
+    #creates: /var/log/lxc
+  tags: 
+    - setup_openstack
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: OpenStack has been Installed
+    body: Openstack has been installed and is now accessible (console VM is still being deployed)
+  when: send_mail | bool
+  tags:
+    - mail
+  

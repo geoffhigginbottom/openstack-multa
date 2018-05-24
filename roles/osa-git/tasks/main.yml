@@ -1,0 +1,36 @@
+---
+
+- name: Install  Packages
+  apt: name={{ item }} state=present
+  with_items:
+    - git
+  when: ansible_os_family == "Debian"
+  tags:
+    - packages
+    - git
+    - ubuntu
+
+- name: Checkout OpenStack-Ansible Git
+  git:
+    repo: "{{ osa_repo }}"
+    dest: "{{ osa_destination }}"
+    version: "{{ osa_version }}"
+    force: "{{ git_force }}"
+  tags:
+    - git
+    - osa
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: OSA Git Repo Cloned
+    body: The OpenStack-Ansible Git Repo has been cloned
+  when: send_mail | bool
+  tags:
+    - mail

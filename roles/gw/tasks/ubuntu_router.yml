@@ -1,0 +1,45 @@
+---
+
+- name: Enable IP Forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    sysctl_set: yes
+  tags:
+    - ubuntu
+    - router
+
+- name: Create rc.local file
+  template:
+    src: rc.j2
+    dest: /etc/rc.local
+    mode: 0755
+  notify: restart rc.local
+  tags:
+    - ubuntu
+    - router
+
+- name: enable service
+  service:
+    name: rc.local
+    enabled: true
+  when: ansible_service_mgr == 'systemd'
+  tags:
+    - ubuntu
+    - router
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Router Installed
+    body: Router has been installed
+  when: send_mail | bool
+  tags:
+    - router
+    - mail

@@ -1,0 +1,104 @@
+---
+
+- name: "Create 'm1.ultra-tiny' flavor with 128MB of RAM & 1 virtual CPU."
+  os_nova_flavor:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: m1.ultra-tiny
+    ram: 128
+    vcpus: 1
+    disk: 10
+    swap: 128
+    wait: no
+    flavorid: 11 
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - m1_ultra_tiny
+    - flavors
+
+- name: "Create 'm1.tiny' flavor with 256MB of RAM & 1 virtual CPU."
+  os_nova_flavor:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: m1.tiny
+    ram: 256
+    vcpus: 1
+    disk: 10
+    swap: 256
+    wait: no
+    flavorid: 12
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - m1_tiny
+    - flavors
+
+
+- name: "Create 't2.nano' flavor with 512MB of RAM & 1 virtual CPU."
+  os_nova_flavor:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: t2.nano
+    ram: 512
+    vcpus: 1
+    disk: 10
+    swap: 512
+    wait: no
+    flavorid: 21
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - t2_nano
+    - flavors
+
+- name: "Create 't2.micro' flavor with 1GB of RAM & 1 virtual CPU."
+  os_nova_flavor:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: t2.micro
+    ram: 1024
+    vcpus: 1
+    disk: 10
+    swap: 1024
+    wait: no
+    flavorid: 22
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - t2_micro
+    - flavors
+
+- name: "Create 't2.small' flavor with 2GB of RAM, 1 virtual CPU, and 10GB of local disk, and 25GB of ephemeral."
+  os_nova_flavor:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: t2.small
+    ram: 2048
+    vcpus: 1
+    disk: 10
+    ephemeral: 25
+    wait: no
+    flavorid: 23
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - t2_small
+    - flavors
+
+- name: "Create 't2.medium' flavor with 4GB of RAM, 1 virtual CPU, and 20GB of local disk, and 50GB of ephemeral."
+  os_nova_flavor:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: t2.medium
+    ram: 4096
+    vcpus: 2
+    disk: 20
+    ephemeral: 50
+    wait: no
+    flavorid: 24
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - t2_medium
+    - flavors

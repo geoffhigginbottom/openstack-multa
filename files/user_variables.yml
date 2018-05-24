@@ -1,0 +1,82 @@
+---
+# Copyright 2014, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+###
+### This file contains commonly used overrides for convenience. Please inspect
+### the defaults for each role to find additional override options.
+###
+
+## Debug and Verbose options.
+debug: false
+
+## Misc
+lxc_net_mtu: 1450
+bootstrap_host_aio_config: no
+
+lxc_cache_prep_timeout: 3600
+lxc_cache_prep_pre_commands: "rm -f /etc/resolv.conf || true"
+lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf -f"
+#  Above Added to fix an LXC bug, this should be fixed in releases > 17.0.3
+
+## Security
+# keystone_service_adminuri_insecure: true
+# keystone_service_internaluri_insecure: true
+# keystone_service_publicuri_insecure: true
+apply_security_hardening: true
+
+## Common Glance Overrides
+## https://docs.openstack.org/openstack-ansible-os_swift/pike/configure-swift-glance.html
+glance_default_store: swift
+glance_swift_store_auth_version: 3
+glance_swift_store_auth_address: http://{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}:5000/v3
+glance_swift_store_container: glance_images
+glance_swift_store_endpoint_type: internalURL
+glance_swift_store_key: '{{ user_variables.stdout }}'
+glance_swift_store_region: RegionOne
+glance_swift_store_user: 'service:glance'
+
+## Nova Options
+nova_virt_type: qemu
+nova_cpu_allocation_ratio: 4.0 
+nova_ram_allocation_ratio: 1.0
+# As this is a virtual env, don't lose precious memory to the VM itself!
+nova_reserved_host_memory_mb: 1024
+
+## Cinder Options
+cinder_iscsi_helper: tgtadm
+cinder_iscsi_iotype: fileio
+cinder_iscsi_num_targets: 100
+cinder_iscsi_port: 3260
+
+## Neutron Options
+neutron_l2_population: true
+neutron_plugin_base:
+  - router
+  - neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2
+neutron_l3_ha: false
+
+## HTTP Proxy Options
+global_environment_variables:
+   HTTP_PROXY: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
+   HTTPS_PROXY: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
+   NO_PROXY: "localhost,127.0.0.1,172.29.236.3/22,{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }},{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+   http_proxy: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
+   https_proxy: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
+   no_proxy: "localhost,127.0.0.1,172.29.236.3/22,{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }},{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+## HAProxy Options
+haproxy_use_keepalived: false
+# haproxy_ssl: false
+

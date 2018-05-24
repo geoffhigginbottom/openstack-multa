@@ -1,0 +1,5 @@
+---
+- hosts: swift
+
+  roles:
+    - swift-disks

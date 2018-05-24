@@ -1,0 +1,156 @@
+---
+
+- name: Install Disk Tools
+  package: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - parted
+    - xfsprogs
+  tags: 
+    - disk-tools
+
+- name: Create parition xvde
+  parted:
+    device: /dev/xvde
+    number: 1
+    state: present
+  tags:
+    - parted
+
+- name: Create parition xvdf
+  parted:
+    device: /dev/xvdf
+    number: 1
+    state: present
+  tags:
+    - parted
+
+- name: Create parition xvdg
+  parted:
+    device: /dev/xvdg
+    number: 1
+    state: present
+  tags:
+    - parted
+
+- name: Create parition xvdh
+  parted:
+    device: /dev/xvdh
+    number: 1
+    state: present
+  tags:
+    - parted
+
+- name: Create parition xvdi
+  parted:
+    device: /dev/xvdi
+    number: 1
+    state: present
+  tags:
+    - parted
+
+- name: Create filesystem xvde
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvde1 
+    opts: "-i size=1024"
+  tags:
+    - filesystem
+
+- name: Create filesystem xvdf
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdf1 
+    opts: "-i size=1024"
+  tags:
+    - filesystem
+
+- name: Create filesystem xvdg
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdg1 
+    opts: "-i size=1024"
+  tags:
+    - filesystem
+
+- name: Create filesystem xvdh
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdh1 
+    opts: "-i size=1024"
+  tags:
+    - filesystem
+
+- name: Create filesystem xvdi
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdi1 
+    opts: "-i size=1024"
+  tags:
+    - filesystem
+
+- name: Mount /dev/xvde1
+  mount:
+    path: /srv/node/xvde
+    src: /dev/xvde1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdf1
+  mount:
+    path: /srv/node/xvdf
+    src: /dev/xvdf1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdg1
+  mount:
+    path: /srv/node/xvdg
+    src: /dev/xvdg1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdh1
+  mount:
+    path: /srv/node/xvdh
+    src: /dev/xvdh1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdi1
+  mount:
+    path: /srv/node/xvdi
+    src: /dev/xvdi1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Disks Prepared on {{ ansible_hostname }}
+    body: Disks have been prepared for Swift on {{ ansible_hostname }}
+  when: send_mail | bool
+  tags:
+    - mail

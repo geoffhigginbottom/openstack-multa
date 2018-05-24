@@ -1,0 +1,15 @@
+---
+
+my_cloud_name: {{ my_cloud_name }}
+my_cloud_username: {{ my_cloud_username }}
+my_cloud_password: {{ my_cloud_password }}
+
+gateway_ip: {{ hostvars['gw']['ansible_br_flat']['ipv4']['address'] }}
+project_1: {{ project_1 }}
+project_1_desc: {{ project_1_desc }}
+project_2: {{ project_2 }}
+project_2_desc: {{ project_2_desc }}
+project_3: {{ project_3 }}
+project_3_desc: {{ project_3_desc }}
+project_4: {{ project_4 }}
+project_4_desc: {{ project_4_desc }}

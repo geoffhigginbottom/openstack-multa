@@ -1,0 +1,20 @@
+---
+
+- name: Fetch Root Public Key
+  fetch: src=/root/.ssh/id_rsa.pub dest=files/ flat=yes fail_on_missing=yes validate_checksum=yes
+  tags: fetch_key
+ 
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Key Fetched
+    body: Key fetched for root user
+  when: send_mail | bool
+  tags:
+    - mail

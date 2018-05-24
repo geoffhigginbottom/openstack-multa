@@ -1,0 +1,122 @@
+---
+
+- name: Create Ansible Log Folder
+  file:
+    path: /ansible/log
+    state: directory
+    mode: 0755
+  tags:
+    - ansible-folders
+    - ansible
+
+- name: Create Ansible host_vars Folder
+  file:
+    path: /ansible/host_vars
+    state: directory
+    mode: 0755
+  tags:
+    - ansible-folders
+    - ansible
+
+- name: Create Ansible roles/configure-openstack Folder
+  file:
+    path: /ansible/roles/configure-openstack
+    state: directory
+    mode: 0755
+  tags:
+    - ansible-folders
+    - ansible
+
+- name: Synchronize 'Configure OpenStack' Role
+  synchronize:
+    mode: push
+    src: roles/configure-openstack/
+    dest: /ansible/roles/configure-openstack
+  tags:
+    - ansible-role
+    - ansible
+    - configure_openstack_role
+    - sync
+
+- name: Copy configure-openstack.yml file
+  copy:
+    src: configure-openstack.yml
+    dest: /ansible/configure-openstack.yml
+  tags:
+    - ansible-role
+    - ansible
+    - configure_openstack_role
+
+- name: Gather facts for gw
+  become: no
+  delegate_to: localhost
+  shell: ansible gw -m setup
+  tags:
+    - gw-facts
+    - host-vars
+    - ansible
+
+- name: Create localhost vars file
+  template:
+    src: localhost.yml
+    dest: /ansible/host_vars/localhost.yml
+  tags:
+    - ansible-role
+    - host-vars
+    - ansible
+
+- name: Copy ansible.cfg file
+  copy:
+    src: ansible.cfg
+    dest: /ansible/ansible.cfg
+  tags:
+    - ansible-config
+    - ansible
+
+- name: Gather facts for lb1
+  become: no
+  delegate_to: localhost
+  shell: ansible lb1 -m setup
+  tags:
+    - lb-facts
+    - ansible
+
+- name: Obtain Admin Password
+  delegate_to: "controller1"
+  shell: "grep keystone_auth_admin_password /etc/openstack_deploy/user_secrets.yml | awk '{print $2}'"
+  register: admin_pwd
+  no_log: true
+  tags:
+    - admin-pwd
+    - ansible
+
+- name: Create openstack.yml on Console-VM
+  template:
+    src: openstack.yaml
+    dest: /ansible/openstack.yaml
+  tags:
+    - openstack_yaml
+    - ansible
+
+- name: Create openrc on Console-VM
+  template:
+    src: openrc
+    dest: /ansible/openrc
+  tags:
+    - openrc
+    - ansible
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: Console Prepared
+    body: Console has been prepared for administrating OpenStack, commencing automatic configuration of OpenStack
+  when: send_mail | bool
+  tags:
+    - mail

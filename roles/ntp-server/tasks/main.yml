@@ -1,0 +1,73 @@
+---
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  when: ansible_os_family == "Debian"
+  tags: 
+    - update
+
+- name: Ensure Chrony is installed
+  package: 
+    name: chrony
+    state: present
+  tags:
+    - packages
+
+- name: configure chrony.conf (Ubuntu)
+  template: 
+    src: ubuntu-chrony.conf 
+    dest: /etc/chrony/chrony.conf
+    backup: yes
+  when: ansible_os_family == "Debian"
+  notify: restart chrony
+  tags:
+    - configure
+
+- name: configure chrony.conf (RedHat)
+  template: 
+    src: redhat-chrony.conf 
+    dest: /etc/chrony.conf
+    backup: yes
+  when: ansible_os_family == "RedHat"
+  notify: restart chronyd
+  tags:
+    - configure
+
+- name: Ensure Chrony is running and set to auto start (Ubuntu)
+  service: 
+    name: chrony
+    state: started 
+    enabled: yes
+  when: ansible_os_family == "Debian"
+  tags:
+    - service_status
+
+- name: Ensure Chrony is running and set to auto start (RedHat)
+  service: 
+    name: chronyd
+    state: started 
+    enabled: yes
+  when: ansible_os_family == "RedHat"
+  tags:
+    - service_status
+
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: NTP Server Installed
+    body: NTP Server has been installed
+  when: send_mail | bool
+  tags:
+    - mail

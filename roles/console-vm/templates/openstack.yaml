@@ -1,0 +1,20 @@
+### Ansible Manged File ###
+
+clouds:
+
+  {{ my_cloud_name }}:
+    auth:
+      auth_url: http://{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}:5000/v3
+      username: admin
+      password: {{ admin_pwd.stdout }}
+      project_name: admin
+      tenant_name: admin
+      user_domain_name: Default
+      project_domain_name: Default
+    region_name: RegionOne
+    interface: internal
+
+ansible:
+  use_hostnames: True
+  expand_hostvars: False
+  fail_on_errors: True

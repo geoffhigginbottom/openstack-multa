@@ -1,0 +1,13 @@
+---
+
+# Configure Openstack Settings
+vault_my_cloud_password: xxxxx
+
+# Status Mail Settings
+vault_host: smtp.mail.me.com
+vault_port: 587
+vault_secure: starttls
+vault_username: xxx@apple.com
+vault_password: xxxxxxxx
+vault_from: xxxxx@me.com
+vault_to: First Last <xxxx@me.com>

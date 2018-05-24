@@ -1,0 +1,36 @@
+---
+
+- name: Create Projects
+  os_project:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    state: present
+    name: '{{ item.name }}'
+    description: '{{ item.description }}'
+    enabled: True
+  with_items:
+    - { name: '{{ project_1 }}', description: '{{ project_1_desc }}'}
+    - { name: '{{ project_2 }}', description: '{{ project_2_desc }}'}
+    - { name: '{{ project_3 }}', description: '{{ project_3_desc }}'}
+    - { name: '{{ project_4 }}', description: '{{ project_4_desc }}'}
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - projects
+
+- name: Update Quotas
+  os_quota:
+    cloud: '{{ my_cloud_name }}'
+    endpoint_type: admin
+    name: '{{ item.project }}'
+    instances: 25
+    cores: 50
+  with_items:
+    - { project: '{{ project_1 }}' }
+    - { project: '{{ project_2 }}' }
+    - { project: '{{ project_3 }}' }
+    - { project: '{{ project_4 }}' }
+  environment:
+    OS_CLIENT_CONFIG_FILE: 'openstack.yaml'
+  tags:
+    - quotas

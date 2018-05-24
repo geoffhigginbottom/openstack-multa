@@ -1,0 +1,5 @@
+---
+- hosts: proxy-settings
+    
+  roles:
+    - proxy-settings

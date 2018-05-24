@@ -1,0 +1,3 @@
+### Ansible Managed File ###
+
+{{ vpn_network }} {{ vpn_netmask }} {{ hostvars['gw']['ansible_br_flat']['ipv4']['address'] }} {{ vpn_interface }}
