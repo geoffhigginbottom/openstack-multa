@@ -39,7 +39,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Bootstrap Complete
+    subject: '{{ subject_prefix }} Bootstrap Complete'
     body: Ansible Bootstrap has been completed
   when: send_mail | bool
   tags:
@@ -163,7 +163,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Running setup-hosts
+    subject: '{{ subject_prefix }} Running setup-hosts'
     body: setup-hosts.yml has commenced
   when: send_mail | bool
   tags:
@@ -205,7 +205,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Running setup-infrastructure
+    subject: '{{ subject_prefix }} Running setup-infrastructure'
     body: setup-infrastructure.yml has commenced
   when: send_mail | bool
   tags:
@@ -227,7 +227,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Running setup-penstack
+    subject: '{{ subject_prefix }} Running setup-penstack'
     body: setup-openstack.yml has commenced
   when: send_mail | bool
   tags:
@@ -250,7 +250,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: OpenStack has been Installed
+    subject: '{{ subject_prefix }} OpenStack has been Installed'
     body: Openstack has been installed and is now accessible (console VM is still being deployed)
   when: send_mail | bool
   tags:

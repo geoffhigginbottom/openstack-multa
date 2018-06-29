@@ -76,7 +76,8 @@
     - ubuntu
 
 - name: Extract the Rackspace Gateway for ServiceNet Network
-  shell: "netstat -r | grep 10.208 | awk '{print $2}'"
+  # shell: "netstat -r | grep 10.208.0.0 | awk '{print $2}'"
+  shell: "netstat -r | grep {{ service_net_address }} | awk '{print $2}'"
   register: service_net_gw
   when: ansible_br_mgmt is not defined
   tags:
@@ -187,7 +188,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: GW VM Prepared
+    subject: '{{ subject_prefix }} GW VM Prepared'
     body: GW VM has been successfully prepared
   run_once: true
   when: send_mail | bool
@@ -366,7 +367,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Starting Reboots
+    subject: '{{ subject_prefix }} Starting Reboots'
     body: Starting reboots of all nodes
   run_once: true
   when: send_mail | bool
@@ -603,7 +604,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Reboots Completed
+    subject: '{{ subject_prefix }} Reboots Completed'
     body: All nodes have been rebooted
   run_once: true
   when: send_mail | bool

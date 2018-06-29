@@ -13,7 +13,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Key Fetched
+    subject: '{{ subject_prefix }} Key Fetched'
     body: Key fetched for root user
   when: send_mail | bool
   tags:

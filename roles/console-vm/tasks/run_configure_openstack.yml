@@ -17,7 +17,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: OpenStack Configuration Complete
+    subject: '{{ subject_prefix }} OpenStack Configuration Complete'
     body: Automatic configuration of OpenStack completed
   when: send_mail | bool
   tags:

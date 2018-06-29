@@ -115,7 +115,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Console Prepared
+    subject: '{{ subject_prefix }} Console Prepared'
     body: Console has been prepared for administrating OpenStack, commencing automatic configuration of OpenStack
   when: send_mail | bool
   tags:
