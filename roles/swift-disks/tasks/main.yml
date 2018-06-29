@@ -10,39 +10,7 @@
   tags: 
     - disk-tools
 
-- name: Create parition xvde
-  parted:
-    device: /dev/xvde
-    number: 1
-    state: present
-  tags:
-    - parted
-
-- name: Create parition xvdf
-  parted:
-    device: /dev/xvdf
-    number: 1
-    state: present
-  tags:
-    - parted
-
-- name: Create parition xvdg
-  parted:
-    device: /dev/xvdg
-    number: 1
-    state: present
-  tags:
-    - parted
-
-- name: Create parition xvdh
-  parted:
-    device: /dev/xvdh
-    number: 1
-    state: present
-  tags:
-    - parted
-
-- name: Create parition xvdi
+- name: Create parition xvdo
   parted:
     device: /dev/xvdi
     number: 1
@@ -50,37 +18,37 @@
   tags:
     - parted
 
-- name: Create filesystem xvde
-  filesystem: 
-    fstype: xfs 
-    dev: /dev/xvde1 
-    opts: "-i size=1024"
+- name: Create parition xvdj
+  parted:
+    device: /dev/xvdj
+    number: 1
+    state: present
   tags:
-    - filesystem
+    - parted
 
-- name: Create filesystem xvdf
-  filesystem: 
-    fstype: xfs 
-    dev: /dev/xvdf1 
-    opts: "-i size=1024"
+- name: Create parition xvdk
+  parted:
+    device: /dev/xvdk
+    number: 1
+    state: present
   tags:
-    - filesystem
+    - parted
 
-- name: Create filesystem xvdg
-  filesystem: 
-    fstype: xfs 
-    dev: /dev/xvdg1 
-    opts: "-i size=1024"
+- name: Create parition xvdl
+  parted:
+    device: /dev/xvdl
+    number: 1
+    state: present
   tags:
-    - filesystem
+    - parted
 
-- name: Create filesystem xvdh
-  filesystem: 
-    fstype: xfs 
-    dev: /dev/xvdh1 
-    opts: "-i size=1024"
+- name: Create parition xvdm
+  parted:
+    device: /dev/xvdm
+    number: 1
+    state: present
   tags:
-    - filesystem
+    - parted
 
 - name: Create filesystem xvdi
   filesystem: 
@@ -90,50 +58,82 @@
   tags:
     - filesystem
 
-- name: Mount /dev/xvde1
-  mount:
-    path: /srv/node/xvde
-    src: /dev/xvde1
-    fstype: xfs
-    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
-    state: mounted
+- name: Create filesystem xvdj
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdj1 
+    opts: "-i size=1024"
   tags:
-    - mount
+    - filesystem
 
-- name: Mount /dev/xvdf1
-  mount:
-    path: /srv/node/xvdf
-    src: /dev/xvdf1
-    fstype: xfs
-    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
-    state: mounted
+- name: Create filesystem xvdk
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdk1 
+    opts: "-i size=1024"
   tags:
-    - mount
+    - filesystem
 
-- name: Mount /dev/xvdg1
-  mount:
-    path: /srv/node/xvdg
-    src: /dev/xvdg1
-    fstype: xfs
-    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
-    state: mounted
+- name: Create filesystem xvdl
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdl1 
+    opts: "-i size=1024"
   tags:
-    - mount
+    - filesystem
 
-- name: Mount /dev/xvdh1
-  mount:
-    path: /srv/node/xvdh
-    src: /dev/xvdh1
-    fstype: xfs
-    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
-    state: mounted
+- name: Create filesystem xvdm
+  filesystem: 
+    fstype: xfs 
+    dev: /dev/xvdm1 
+    opts: "-i size=1024"
   tags:
-    - mount
+    - filesystem
 
 - name: Mount /dev/xvdi1
   mount:
     path: /srv/node/xvdi
     src: /dev/xvdi1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdj1
+  mount:
+    path: /srv/node/xvdj
+    src: /dev/xvdj1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdk1
+  mount:
+    path: /srv/node/xvdk
+    src: /dev/xvdk1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdl1
+  mount:
+    path: /srv/node/xvdl
+    src: /dev/xvdl1
+    fstype: xfs
+    opts: noatime,nodiratime,nobarrier,logbufs=8,auto
+    state: mounted
+  tags:
+    - mount
+
+- name: Mount /dev/xvdm1
+  mount:
+    path: /srv/node/xvdm
+    src: /dev/xvdm1
     fstype: xfs
     opts: noatime,nodiratime,nobarrier,logbufs=8,auto
     state: mounted
@@ -149,7 +149,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Disks Prepared on {{ ansible_hostname }}
+    subject: '{{ subject_prefix }} Disks Prepared on {{ ansible_hostname }}'
     body: Disks have been prepared for Swift on {{ ansible_hostname }}
   when: send_mail | bool
   tags:

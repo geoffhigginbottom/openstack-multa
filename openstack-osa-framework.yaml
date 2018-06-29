@@ -19,7 +19,7 @@ parameters:
     type: string
     label: Compute Flavor
     description: Type of instance (flavor) to be used for Compute Nodes
-    default: 30GB Standard Instance
+    default: 60 GB I/O v1
 
   cinder_flavor:
     type: string
@@ -279,7 +279,7 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: controller1 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdo
       volume_id: { get_resource: controller1_volume1 }
     depends_on: controller1
 
@@ -306,7 +306,7 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: controller2 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdo
       volume_id: { get_resource: controller2_volume1 }
     depends_on: controller2
 
@@ -333,7 +333,7 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: controller3 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdo
       volume_id: { get_resource: controller3_volume1 }
     depends_on: controller3
 
@@ -362,7 +362,7 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: compute1 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdo
       volume_id: { get_resource: compute1_volume1 }
     depends_on: compute1
 
@@ -389,7 +389,7 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: compute2 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdo
       volume_id: { get_resource: compute2_volume1 }
     depends_on: compute2
   
@@ -416,7 +416,7 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: compute3 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdo
       volume_id: { get_resource: compute3_volume1 }
     depends_on: compute3
 
@@ -443,7 +443,7 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: cinder1 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdo
       volume_id: { get_resource: cinder1_volume1 }
     depends_on: cinder1
 
@@ -470,35 +470,35 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift1 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdi
       volume_id: { get_resource: swift1_volume1 }
 
   swift1_volume2_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift1 }
-      mountpoint: /dev/xvdf
+      mountpoint: /dev/xvdj
       volume_id: { get_resource: swift1_volume2 }
 
   swift1_volume3_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift1 }
-      mountpoint: /dev/xvdg
+      mountpoint: /dev/xvdk
       volume_id: { get_resource: swift1_volume3 }
 
   swift1_volume4_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift1 }
-      mountpoint: /dev/xvdh
+      mountpoint: /dev/xvdl
       volume_id: { get_resource: swift1_volume4 }
 
   swift1_volume5_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift1 }
-      mountpoint: /dev/xvdi
+      mountpoint: /dev/xvdm
       volume_id: { get_resource: swift1_volume5 }
 
   swift2:
@@ -522,35 +522,35 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift2 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdi
       volume_id: { get_resource: swift2_volume1 }
 
   swift2_volume2_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift2 }
-      mountpoint: /dev/xvdf
+      mountpoint: /dev/xvdj
       volume_id: { get_resource: swift2_volume2 }
 
   swift2_volume3_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift2 }
-      mountpoint: /dev/xvdg
+      mountpoint: /dev/xvdk
       volume_id: { get_resource: swift2_volume3 }
 
   swift2_volume4_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift2 }
-      mountpoint: /dev/xvdh
+      mountpoint: /dev/xvdl
       volume_id: { get_resource: swift2_volume4 }
 
   swift2_volume5_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift2 }
-      mountpoint: /dev/xvdi
+      mountpoint: /dev/xvdm
       volume_id: { get_resource: swift2_volume5 }
 
   swift3:
@@ -574,35 +574,35 @@ resources:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift3 }
-      mountpoint: /dev/xvde
+      mountpoint: /dev/xvdi
       volume_id: { get_resource: swift3_volume1 }
 
   swift3_volume2_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift3 }
-      mountpoint: /dev/xvdf
+      mountpoint: /dev/xvdj
       volume_id: { get_resource: swift3_volume2 }
 
   swift3_volume3_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift3 }
-      mountpoint: /dev/xvdg
+      mountpoint: /dev/xvdk
       volume_id: { get_resource: swift3_volume3 }
 
   swift3_volume4_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift3 }
-      mountpoint: /dev/xvdh
+      mountpoint: /dev/xvdl
       volume_id: { get_resource: swift3_volume4 }
 
   swift3_volume5_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
       instance_uuid: { get_resource: swift3 }
-      mountpoint: /dev/xvdi
+      mountpoint: /dev/xvdm
       volume_id: { get_resource: swift3_volume5 }
 
 ## LB Nodes ##
