@@ -58,7 +58,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Squid Installed
+    subject: '{{ subject_prefix }} Squid Installed'
     body: Squid has been installed
   when: send_mail | bool
   tags:

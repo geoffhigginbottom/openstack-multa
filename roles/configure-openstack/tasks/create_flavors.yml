@@ -1,6 +1,6 @@
 ---
 
-- name: "Create 'm1.ultra-tiny' flavor with 128MB of RAM & 1 virtual CPU."
+- name: "Create 'm1.ultra-tiny' flavor with 128MB of RAM & 1 virtual CPU, 10GB System Disk and 20GB Ephemeral."
   os_nova_flavor:
     cloud: '{{ my_cloud_name }}'
     endpoint_type: admin
@@ -8,7 +8,8 @@
     ram: 128
     vcpus: 1
     disk: 10
-    swap: 128
+    # swap: 128
+    ephemeral: 20
     wait: no
     flavorid: 11 
   environment:
@@ -17,7 +18,7 @@
     - m1_ultra_tiny
     - flavors
 
-- name: "Create 'm1.tiny' flavor with 256MB of RAM & 1 virtual CPU."
+- name: "Create 'm1.tiny' flavor with 256MB of RAM & 1 virtual CPU, 10GB System Disk and 20GB Ephemeral"
   os_nova_flavor:
     cloud: '{{ my_cloud_name }}'
     endpoint_type: admin
@@ -25,7 +26,8 @@
     ram: 256
     vcpus: 1
     disk: 10
-    swap: 256
+    # swap: 256
+    ephemeral: 20
     wait: no
     flavorid: 12
   environment:
@@ -43,7 +45,7 @@
     ram: 512
     vcpus: 1
     disk: 10
-    swap: 512
+    # swap: 512
     wait: no
     flavorid: 21
   environment:
@@ -52,7 +54,7 @@
     - t2_nano
     - flavors
 
-- name: "Create 't2.micro' flavor with 1GB of RAM & 1 virtual CPU."
+- name: "Create 't2.micro' flavor with 1GB of RAM & 1 virtual CPU and 10GB of local disk."
   os_nova_flavor:
     cloud: '{{ my_cloud_name }}'
     endpoint_type: admin
@@ -60,7 +62,7 @@
     ram: 1024
     vcpus: 1
     disk: 10
-    swap: 1024
+    # swap: 1024
     wait: no
     flavorid: 22
   environment:
@@ -69,7 +71,7 @@
     - t2_micro
     - flavors
 
-- name: "Create 't2.small' flavor with 2GB of RAM, 1 virtual CPU, and 10GB of local disk, and 25GB of ephemeral."
+- name: "Create 't2.small' flavor with 2GB of RAM, 1 virtual CPU and 10GB of local disk."
   os_nova_flavor:
     cloud: '{{ my_cloud_name }}'
     endpoint_type: admin
@@ -77,7 +79,6 @@
     ram: 2048
     vcpus: 1
     disk: 10
-    ephemeral: 25
     wait: no
     flavorid: 23
   environment:
@@ -86,7 +87,7 @@
     - t2_small
     - flavors
 
-- name: "Create 't2.medium' flavor with 4GB of RAM, 1 virtual CPU, and 20GB of local disk, and 50GB of ephemeral."
+- name: "Create 't2.medium' flavor with 4GB of RAM, 1 virtual CPU and 20GB of local disk."
   os_nova_flavor:
     cloud: '{{ my_cloud_name }}'
     endpoint_type: admin
@@ -94,7 +95,6 @@
     ram: 4096
     vcpus: 2
     disk: 20
-    ephemeral: 50
     wait: no
     flavorid: 24
   environment:

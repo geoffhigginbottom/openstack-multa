@@ -16,7 +16,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Key Installed on {{ ansible_hostname }}
+    subject: '{{ subject_prefix }} Key Installed on {{ ansible_hostname }}'
     body: Root key has been installed on {{ ansible_hostname }}
   when: send_mail | bool
   tags:

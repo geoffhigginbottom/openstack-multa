@@ -169,7 +169,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Console Initial Setup
+    subject: '{{ subject_prefix }} Console Initial Setup'
     body: The initial configuartion of the console VM has completed, now preparing it for use with OpenStack
   when: send_mail | bool
   tags:

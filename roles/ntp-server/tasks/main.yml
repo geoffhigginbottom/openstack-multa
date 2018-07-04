@@ -66,7 +66,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: NTP Server Installed
+    subject: '{{ subject_prefix }} NTP Server Installed'
     body: NTP Server has been installed
   when: send_mail | bool
   tags:

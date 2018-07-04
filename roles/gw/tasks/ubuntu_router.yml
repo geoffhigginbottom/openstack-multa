@@ -37,7 +37,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: Router Installed
+    subject: '{{ subject_prefix }} Router Installed'
     body: Router has been installed
   when: send_mail | bool
   tags:

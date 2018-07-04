@@ -29,7 +29,7 @@
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
-    subject: OSA Git Repo Cloned
+    subject: '{{ subject_prefix }} OSA Git Repo Cloned'
     body: The OpenStack-Ansible Git Repo has been cloned
   when: send_mail | bool
   tags:

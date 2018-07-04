@@ -6,9 +6,11 @@ osa_version: stable/pike
 osa_destination: /opt/openstack-ansible
 git_force: no
 
-controller_lxc_vg: /dev/xvde
-storage_cinder_vg: /dev/xvde
-compute_cinder_vg: /dev/xvde
+service_net_address: 10.208.0.0
+
+controller_lxc_vg: /dev/xvdo
+storage_cinder_vg: /dev/xvdo
+compute_cinder_vg: /dev/xvdo
 
 # Console Settings
 my_cloud_name: osa_test_env
@@ -32,7 +34,7 @@ project_4_desc: Ansible Demo Project
 ## in the ntp-client.yml playbook / template as it is normally run before the osa-prep.yml playbook
 ## IMPORTANT - you need to update the IP Address to the correct value - It's the br_mgmt IP of controller1
 ## TODO - Add code to handle this automatically!
-# ntp_server_ip: 172.29.236.11
+# ntp_server_ip: 172.29.236.7
 
 
 # VPN Settings
@@ -42,6 +44,7 @@ vpn_interface: br-flat
 
 # Status Mail Settings - values are stored in encrypted vault file
 send_mail: true
+subject_prefix: 'openstack-multa:'
 host: '{{ vault_host }}'
 port: '{{ vault_port }}'
 secure: '{{ vault_secure }}'
