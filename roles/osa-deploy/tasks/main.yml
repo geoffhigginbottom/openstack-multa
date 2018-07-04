@@ -85,6 +85,7 @@
   tags:
     - facts
     - user_config
+    - user_variables
 
 - name: Create openstack_user_config.yml from template
   template:
@@ -138,13 +139,13 @@
   tags:
     - user_variables
 
-- name: Create cinder.yml from template
-  template:
-    src: files/cinder.yml
-    dest: /etc/openstack_deploy/env.d/cinder.yml
-    backup: yes
-  tags:
-    - cinder
+# - name: Create cinder.yml from template
+#   template:
+#     src: files/cinder.yml
+#     dest: /etc/openstack_deploy/env.d/cinder.yml
+#     backup: yes
+#   tags:
+#     - cinder
 
 - name: Create swift.yml from template
   template:

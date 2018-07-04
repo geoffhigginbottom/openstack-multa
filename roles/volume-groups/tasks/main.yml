@@ -28,13 +28,13 @@
   tags:
     - compute
 
-- name: Create Cinder Volume Group Storage Nodes
-  lvg:
-    vg: cinder-volumes
-    pvs: "{{ storage_cinder_vg }}"
-  when: inventory_hostname | search("cinder")
-  tags:
-    - cinder
+# - name: Create Cinder Volume Group Storage Nodes
+#   lvg:
+#     vg: cinder-volumes
+#     pvs: "{{ storage_cinder_vg }}"
+#   when: inventory_hostname | search("cinder")
+#   tags:
+#     - cinder
     
 - name: Sending a status update e-mail
   mail:

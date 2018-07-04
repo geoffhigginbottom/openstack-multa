@@ -36,16 +36,24 @@ lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.c
 # keystone_service_publicuri_insecure: true
 apply_security_hardening: true
 
-## Common Glance Overrides
-## https://docs.openstack.org/openstack-ansible-os_swift/pike/configure-swift-glance.html
-glance_default_store: swift
-glance_swift_store_auth_version: 3
-glance_swift_store_auth_address: http://{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}:5000/v3
-glance_swift_store_container: glance_images
-glance_swift_store_endpoint_type: internalURL
-glance_swift_store_key: '{{ user_variables.stdout }}'
-glance_swift_store_region: RegionOne
-glance_swift_store_user: 'service:glance'
+# ## Common Glance Overrides
+# ## https://docs.openstack.org/openstack-ansible-os_swift/pike/configure-swift-glance.html
+# glance_default_store: swift
+# glance_swift_store_auth_version: 3
+# glance_swift_store_auth_address: http://{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}:5000/v3
+# glance_swift_store_container: glance_images
+# glance_swift_store_endpoint_type: internalURL
+# glance_swift_store_key: '{{ user_variables.stdout }}'
+# glance_swift_store_region: RegionOne
+# glance_swift_store_user: 'service:glance'
+
+## Glance Options
+# Set glance_default_store to "swift" if using Cloud Files or swift backend
+# or "rbd" if using ceph backend; the latter will trigger ceph to get
+# installed on glance
+# glance_default_store: file
+glance_notification_driver: noop
+
 
 ## Nova Options
 nova_virt_type: qemu
@@ -54,11 +62,48 @@ nova_ram_allocation_ratio: 1.0
 # As this is a virtual env, don't lose precious memory to the VM itself!
 nova_reserved_host_memory_mb: 1024
 
-## Cinder Options
-cinder_iscsi_helper: tgtadm
-cinder_iscsi_iotype: fileio
-cinder_iscsi_num_targets: 100
-cinder_iscsi_port: 3260
+# ## Cinder Options
+# cinder_iscsi_helper: tgtadm
+# cinder_iscsi_iotype: fileio
+# cinder_iscsi_num_targets: 100
+# cinder_iscsi_port: 3260
+
+
+## Ceph cluster fsid (must be generated before first run)
+## Generate a uuid using: python -c 'import uuid; print(str(uuid.uuid4()))'
+generate_fsid: true
+# fsid: 5b8ced1c-7518-4d83-97a5-64f4b2c01340 # Replace with your generated UUID
+
+## ceph-ansible settings
+## See https://github.com/ceph/ceph-ansible/tree/master/group_vars for
+## additional configuration options availble.
+monitor_address_block: "172.29.236.0/24"
+public_network: "172.29.236.0/24"
+cluster_network: "172.29.244.0/24"
+osd_scenario: collocated
+journal_size: 10240 # size in MB
+# ceph-ansible automatically creates pools & keys for OpenStack services
+openstack_config: true
+cinder_ceph_client: cinder
+glance_ceph_client: glance
+glance_default_store: rbd
+glance_rbd_store_pool: images
+nova_libvirt_images_rbd_pool: vms
+osd_auto_discovery: false # this should detect empty disks and use them as OSDs
+# osd_objectstore: bluestore # testing this setting - did not work on pike
+osd_objectstore: filestore
+
+cinder_backends:
+  RBD:
+    volume_driver: cinder.volume.drivers.rbd.RBDDriver
+    rbd_pool: volumes
+    rbd_ceph_conf: /etc/ceph/ceph.conf
+    rbd_store_chunk_size: 8
+    volume_backend_name: rbddriver
+    rbd_user: "{{ '{{' }} cinder_ceph_client {{ '}}' }}"
+    rbd_secret_uuid: "{{ '{{' }} cinder_ceph_client_uuid {{ '}}' }}"
+    report_discard_supported: true
+
 
 ## Neutron Options
 neutron_l2_population: true

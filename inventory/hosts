@@ -11,8 +11,10 @@ compute1
 compute2
 compute3
 
-[cinder]
-cinder1
+[ceph]
+ceph1
+ceph2
+ceph3
 
 [swift]
 swift1
@@ -37,7 +39,7 @@ controller3
 
 [ntp-client:children]
 compute
-cinder
+ceph
 swift
 lb
 consoles
@@ -46,7 +48,7 @@ gateway
 [proxy-settings:children]
 controller
 compute
-cinder
+ceph
 swift
 lb
 consoles
@@ -54,12 +56,11 @@ consoles
 [volume-groups:children]
 controller
 compute
-cinder
 
 [general:children]
 controller
 compute
-cinder
+ceph
 swift
 lb
 consoles

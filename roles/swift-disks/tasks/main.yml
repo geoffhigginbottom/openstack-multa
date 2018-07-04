@@ -10,7 +10,7 @@
   tags: 
     - disk-tools
 
-- name: Create parition xvdo
+- name: Create parition xvdi
   parted:
     device: /dev/xvdi
     number: 1

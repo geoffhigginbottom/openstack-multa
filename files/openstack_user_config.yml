@@ -36,6 +36,7 @@ global_overrides:
           - cinder_volume
           - nova_compute
           - swift_proxy
+          - ceph-mon
         type: "raw"
         container_bridge: "br-storage"
         container_type: "veth"
@@ -170,19 +171,128 @@ storage-infra_hosts:
 # List of target hosts on which to deploy the cinder volume service. Recommend
 # one minimum target host for this service. Typically contains target hosts
 # that do not reside in other levels.
-storage_hosts:
-  cinder1:
-    ip: "{{ hostvars['cinder1']['ansible_br_mgmt']['ipv4']['address'] }}"
+
+storage_hosts:  
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
     container_vars:
-      cinder_storage_availability_zone: nova
-      cinder_default_availability_zone: nova
       cinder_backends:
-        lvm:
-          volume_backend_name: LVM_iSCSI
-          volume_driver: cinder.volume.drivers.lvm.LVMVolumeDriver
-          volume_group: cinder-volumes
-          iscsi_ip_address: "{{ hostvars['cinder1']['ansible_br_storage']['ipv4']['address'] }}"
         limit_container_types: cinder_volume
+        ceph:
+          volume_driver: cinder.volume.drivers.rbd.RBDDriver
+          rbd_pool: volumes
+          rbd_ceph_conf: /etc/ceph/ceph.conf
+          rbd_flatten_volume_from_snapshot: 'false'
+          rbd_max_clone_depth: 5
+          rbd_store_chunk_size: 4
+          rados_connect_timeout: -1
+          glance_api_version: 2
+          volume_backend_name: ceph
+          rbd_user: "{{ '{{' }} cinder_ceph_client {{ '}}' }}"
+          rbd_secret_uuid: "{{ '{{' }} cinder_ceph_client_uuid {{ '}}' }}"
+
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    container_vars:
+      cinder_backends:
+        limit_container_types: cinder_volume
+        ceph:
+          volume_driver: cinder.volume.drivers.rbd.RBDDriver
+          rbd_pool: volumes
+          rbd_ceph_conf: /etc/ceph/ceph.conf
+          rbd_flatten_volume_from_snapshot: 'false'
+          rbd_max_clone_depth: 5
+          rbd_store_chunk_size: 4
+          rados_connect_timeout: -1
+          glance_api_version: 2
+          volume_backend_name: ceph
+          rbd_user: "{{ '{{' }} cinder_ceph_client {{ '}}' }}"
+          rbd_secret_uuid: "{{ '{{' }} cinder_ceph_client_uuid {{ '}}' }}"
+
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    container_vars:
+      cinder_backends:
+        limit_container_types: cinder_volume
+        ceph:
+          volume_driver: cinder.volume.drivers.rbd.RBDDriver
+          rbd_pool: volumes
+          rbd_ceph_conf: /etc/ceph/ceph.conf
+          rbd_flatten_volume_from_snapshot: 'false'
+          rbd_max_clone_depth: 5
+          rbd_store_chunk_size: 4
+          rados_connect_timeout: -1
+          glance_api_version: 2
+          volume_backend_name: ceph
+          rbd_user: "{{ '{{' }} cinder_ceph_client {{ '}}' }}"
+          rbd_secret_uuid: "{{ '{{' }} cinder_ceph_client_uuid {{ '}}' }}"
+
+ceph-osd_hosts:
+  ceph1:
+    ip: "{{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    affinity:
+      ceph_osd_container: 3
+    container_vars:
+    # The devices must be specified in conjunction with raw_journal_devices below.
+    # If you want one journal device per five drives, specify the same journal_device five times.
+      devices:
+        - /dev/xvdi
+        - /dev/xvdj
+        - /dev/xvdk
+        - /dev/xvdl
+        - /dev/xvdm
+
+  ceph2:
+    ip: "{{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    affinity:
+      ceph_osd_container: 3
+    container_vars:
+    # The devices must be specified in conjunction with raw_journal_devices below.
+    # If you want one journal device per five drives, specify the same journal_device five times.
+      devices:
+        - /dev/xvdi
+        - /dev/xvdj
+        - /dev/xvdk
+        - /dev/xvdl
+        - /dev/xvdm
+
+  ceph3:
+    ip: "{{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    affinity:
+      ceph_osd_container: 3
+    container_vars:
+    # The devices must be specified in conjunction with raw_journal_devices below.
+    # If you want one journal device per five drives, specify the same journal_device five times.
+      devices:
+        - /dev/xvdi
+        - /dev/xvdj
+        - /dev/xvdk
+        - /dev/xvdl
+        - /dev/xvdm
+
+# ceph-mon containers
+ceph-mon_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    affinity:
+      ceph_mon_container: 3
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    affinity:
+      ceph_mon_container: 3
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    affinity:
+      ceph_mon_container: 3
+
+# cinder volume hosts (Ceph RBD-backed)
+storage_hosts:
+  controller1:
+    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller3:
+    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
 
 # Level: log_hosts (required)
 # List of target hosts on which to deploy logging services. Recommend
