@@ -7,12 +7,13 @@ In its current form it will deploy the following:
 
     3x Controllers
     3x Compute
+    3x Ceph
     3x Swift
-    1x Cinder
     1x HA Proxy LB
     1x Gateway
     1x Console
 
+### Update for V2.0 - The single Cinder node has now been replaced with 3x ceph Nodes
 
 ## Ansible Vault
 
