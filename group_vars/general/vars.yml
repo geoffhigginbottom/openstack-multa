@@ -43,7 +43,7 @@ vpn_netmask: 255.255.240.0
 vpn_interface: br-flat
 
 # Status Mail Settings - values are stored in encrypted vault file
-send_mail: true
+send_mail: false
 subject_prefix: 'openstack-multa:'
 host: '{{ vault_host }}'
 port: '{{ vault_port }}'
