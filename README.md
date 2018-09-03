@@ -185,6 +185,21 @@ You can now connect to the VPN by installing the appropriate openvpn client and 
 
 (A future version of this repo will automate the installation and configuration of the VPN)
 
+### Slow OpenVPN UI
+If you experience a very slow Admin UI perform the following steps (this should not be required for releases newer than 2.5.2 as it is supposed to be fixed)
+
+Log on through SSH to the Access Server and obtain root privileges. Then run these commands:
+
+	cd /usr/local/openvpn_as/scripts
+	
+	./sacli --key vpn.client.client_sockbuf --value 0 ConfigPut
+	
+	./sacli --key vpn.server.server_sockbuf_tcp --value 0 ConfigPut
+	
+	./sacli --key vpn.server.server_sockbuf_udp --value 0 ConfigPut
+	
+	./sacli start
+
 ## Mail Alerting
 
 As the deployment takes approximately 3.5 hours from start to finish, it can be useful to monitor its progress via e-mail.  To disable this you need to set "send\_mail: false" in the /group_vars/general/vars.yml file (it is enabled by dafult).  You will also need to complete all the "Status Mail Settings" in the vault.yml file. 
