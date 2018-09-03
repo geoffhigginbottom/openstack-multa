@@ -34,7 +34,7 @@ lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.c
 # keystone_service_adminuri_insecure: true
 # keystone_service_internaluri_insecure: true
 # keystone_service_publicuri_insecure: true
-apply_security_hardening: true
+apply_security_hardening: false
 
 # ## Common Glance Overrides
 # ## https://docs.openstack.org/openstack-ansible-os_swift/pike/configure-swift-glance.html
