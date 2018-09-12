@@ -32,22 +32,33 @@
   tags:
     - facts
 
-- name: Configure chrony with template (Ubuntu) (hostvars)
-  template: 
-    src: ubuntu-chrony-hostvars.conf 
-    dest: /etc/chrony/chrony.conf
-    backup: yes
-  when: (ansible_os_family == "Debian") and (ntp_server_ip is defined)
-  notify: restart chrony
+- name: Set ntp_server_ip Fact (eth3)
+  set_fact:
+    ntp_server_ip: "{{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
   tags:
-    - configure
+    - facts
+
+- name: Set ntp_server_ip Fact (br_mgmt)
+  set_fact:
+    ntp_server_ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  tags:
+    - facts
+
+- name: Debug ntp_server_ip
+  debug:
+    msg: ntp_server_ip fact is {{ ntp_server_ip }}
+    verbosity: 2
+  tags:
+    - facts
 
 - name: Configure chrony with template (Ubuntu)
   template: 
     src: ubuntu-chrony.conf 
     dest: /etc/chrony/chrony.conf
     backup: yes
-  when: (ansible_os_family == "Debian") and (ntp_server_ip is not defined)
+  when: ansible_os_family == "Debian"
   notify: restart chrony
   tags:
     - configure
@@ -57,7 +68,7 @@
     src: redhat-chrony.conf 
     dest: /etc/chrony.conf
     backup: yes
-  when: (ansible_os_family == "RedHat") and (ansible_br_mgmt is not defined)
+  when: ansible_os_family == "RedHat"
   notify: restart chronyd
   tags:
     - configure
