@@ -72,6 +72,11 @@
     - pip
     - ubuntu
 
+- name: Upgrade PIP
+  command: pip install --upgrade pip
+  tags:
+    - pip
+
 - name: Install Shade
   pip:
     name: shade
