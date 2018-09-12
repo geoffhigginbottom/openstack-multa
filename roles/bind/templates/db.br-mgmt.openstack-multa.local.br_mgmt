@@ -1,0 +1,38 @@
+;
+; Ansible Configured File
+; BIND data file for br-mgmt network
+;
+$TTL    604800
+@       IN      SOA     controller1.br-mgmt.openstack-multa.local. admin.br-mgmt.openstack-multa.local. (
+                        {{ bind_zone_serial }}         ; Serial
+                        3h         ; Refresh
+                        1h         ; Retry
+                        1w         ; Expire
+                        1h )       ; Negative Cache TTL
+;
+; name servers - NS records
+     IN      NS      controller1.br-mgmt.openstack-multa.local.
+     IN      NS      controller2.br-mgmt.openstack-multa.local.
+     IN      NS      controller3.br-mgmt.openstack-multa.local.
+
+ceph1.br-mgmt.openstack-multa.local.              IN      A       {{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}
+ceph2.br-mgmt.openstack-multa.local.              IN      A       {{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}
+ceph3.br-mgmt.openstack-multa.local.              IN      A       {{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}
+
+compute1.br-mgmt.openstack-multa.local.           IN      A       {{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}
+compute2.br-mgmt.openstack-multa.local.           IN      A       {{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}
+compute3.br-mgmt.openstack-multa.local.           IN      A       {{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}
+
+controller1.br-mgmt.openstack-multa.local.        IN      A       {{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}
+controller2.br-mgmt.openstack-multa.local.        IN      A       {{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}
+controller3.br-mgmt.openstack-multa.local.        IN      A       {{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}
+
+console.br-mgmt.openstack-multa.local.            IN      A       {{ hostvars['console']['ansible_br_mgmt']['ipv4']['address'] }}
+
+gw.br-mgmt.openstack-multa.local.                 IN      A       {{ hostvars['gw']['ansible_br_mgmt']['ipv4']['address'] }}
+
+lb1.br-mgmt.openstack-multa.local.                IN      A       {{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}
+
+swift1.br-mgmt.openstack-multa.local.             IN      A       {{ hostvars['swift1']['ansible_br_mgmt']['ipv4']['address'] }}
+swift2.br-mgmt.openstack-multa.local.             IN      A       {{ hostvars['swift2']['ansible_br_mgmt']['ipv4']['address'] }}
+swift3.br-mgmt.openstack-multa.local.             IN      A       {{ hostvars['swift3']['ansible_br_mgmt']['ipv4']['address'] }}

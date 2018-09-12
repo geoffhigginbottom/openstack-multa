@@ -92,22 +92,43 @@
     - networking
     - ubuntu
 
-- name: Extract the DNS Servers
-  shell: cat /etc/network/interfaces | grep -m 1 dns-nameservers | awk '{print $2 " " $3}'
-  register: dns_servers
-  when: ansible_br_mgmt is not defined
+
+### Added Bind so the controllers are now be the DNS Servers - IPs are referenced in vars.yml
+# - name: Extract the DNS Servers
+#   shell: cat /etc/network/interfaces | grep -m 1 dns-nameservers | awk '{print $2 " " $3}'
+#   register: dns_servers
+#   when: ansible_br_mgmt is not defined
+#   tags:
+#     - networking
+#     - ubuntu
+
+- name: Construct DNS Servers Fact (eth)
+  set_fact:
+    dns_servers: "{{hostvars['controller1']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller2']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller3']['ansible_eth3']['ipv4']['address']}}"
+  when: ansible_br_mgmt is not defined 
   tags:
     - networking
     - ubuntu
+    - bind
+
+- name: Construct DNS Servers Fact (br_mgmt)
+  set_fact:
+    dns_servers: "{{hostvars['controller1']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller2']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller3']['ansible_br_flat']['ipv4']['address']}}"
+  when: ansible_br_mgmt is defined 
+  tags:
+    - networking
+    - ubuntu
+    - bind
 
 - name: Debug DNS Servers
   debug: 
-    var: dns_servers.stdout
+    var: dns_servers
     verbosity: 2
   when: ansible_br_mgmt is not defined
   tags:
     - networking
     - ubuntu
+    - bind
 
 - name: Configure GW Bridges
   template:
@@ -118,7 +139,8 @@
   register: bridges_gw
   tags:
     - networking
-    - ubuntu
+    - ubuntu 
+    - gw
 
 - name: Debug Networking GW
   debug: 
@@ -127,17 +149,19 @@
   when: (ansible_os_family == "Debian") and (inventory_hostname | search("gw"))
   tags:
     - networking
-    - ubuntu
+    - ubuntu 
+    - gw
 
-## generates the reboot-required.pkgs
-## used just for testing reboot code which follows
-## comment out once working
+# # generates the reboot-required.pkgs
+# # used just for testing reboot code which follows
+# # comment out once working
 # - name: Generate reboot file
 #   copy:
 #     src: files/reboot-required.pkgs
 #     dest: /var/run/reboot-required.pkgs
 #   tags:
 #     - test
+#     - networking
 
 - name: Is Reboot Required
   stat: 

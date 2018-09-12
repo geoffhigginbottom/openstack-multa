@@ -1,0 +1,52 @@
+//
+// Ansible Configured File
+//
+
+zone "br-mgmt.openstack-multa.local" {
+    type master;
+    notify yes;
+    file "/etc/bind/zones/db.br-mgmt.openstack-multa.local";
+    allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+};
+
+zone "236.29.172.in-addr.arpa" {
+    type master;
+    notify yes;
+    file "/etc/bind/zones/db.236.29.172";
+    allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+};
+
+# zone "237.29.172.in-addr.arpa" {
+#     type master;
+#     notify yes;
+#     file "/etc/bind/zones/db.237.29.172";
+#     allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+# };
+
+# zone "238.29.172.in-addr.arpa" {
+#     type master;
+#     notify yes;
+#     file "/etc/bind/zones/db.238.29.172";
+#     allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+# };
+
+# zone "239.29.172.in-addr.arpa" {
+#     type master;
+#     notify yes;
+#     file "/etc/bind/zones/db.239.29.172";
+#     allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+# };
+
+zone "br-storage.openstack-multa.local" {
+    type master;
+    notify yes;
+    file "/etc/bind/zones/db.br-storage.openstack-multa.local";
+    allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+};
+
+zone "244.29.172.in-addr.arpa" {
+    type master;
+    notify yes;
+    file "/etc/bind/zones/db.244.29.172";
+    allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+};
