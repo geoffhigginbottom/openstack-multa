@@ -31,7 +31,9 @@ console
 gw
 
 [bind-servers]
-bind
+controller1
+controller2
+controller3
 
 [ntp-server]
 controller1
@@ -47,7 +49,6 @@ swift
 lb
 consoles
 gateway
-bind-servers
 
 [proxy-settings:children]
 controller
@@ -69,7 +70,6 @@ swift
 lb
 consoles
 gateway
-bind-servers
 
 [general:vars]
 ansible_python_interpreter=/usr/bin/python3
