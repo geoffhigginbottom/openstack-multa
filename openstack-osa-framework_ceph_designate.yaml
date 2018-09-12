@@ -77,7 +77,6 @@ parameter_groups:
   - controller_flavor
   - compute_flavor
   - ceph_flavor
-  # - cinder_flavor
   - swift_flavor
   - lb_flavor
   - console_flavor
@@ -896,26 +895,6 @@ resources:
       flavor: { get_param: gw_flavor }
       key_name: { get_param: key_name }
       name: "gw"
-      networks:
-        - uuid: 00000000-0000-0000-0000-000000000000
-        - uuid: 11111111-1111-1111-1111-111111111111
-        - uuid: { get_resource: encapsulation_network }
-        - uuid: { get_resource: mgmt_network }
-        - uuid: { get_resource: vxlan_network }
-        - uuid: { get_resource: flat_network }
-      config_drive: True
-      user_data_format: RAW
-
-
-## Bind Node ##
-
-  bind:
-    type: "OS::Nova::Server"
-    properties:
-      image: { get_param: image }
-      flavor: { get_param: bind_flavor }
-      key_name: { get_param: key_name }
-      name: "bind"
       networks:
         - uuid: 00000000-0000-0000-0000-000000000000
         - uuid: 11111111-1111-1111-1111-111111111111
