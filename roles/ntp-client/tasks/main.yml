@@ -35,14 +35,14 @@
 - name: Set ntp_server_ip Fact (eth3)
   set_fact:
     ntp_server_ip: "{{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}"
-  when: ansible_br_mgmt is not defined
+  when: hostvars['controller1']['ansible_br_mgmt'] is not defined
   tags:
     - facts
 
 - name: Set ntp_server_ip Fact (br_mgmt)
   set_fact:
     ntp_server_ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
-  when: ansible_br_mgmt is defined
+  when: hostvars['controller1']['ansible_br_mgmt'] is defined
   tags:
     - facts
 
