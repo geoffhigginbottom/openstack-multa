@@ -102,10 +102,19 @@
 #     - networking
 #     - ubuntu
 
+- name: Refresh Facts
+  become: no
+  delegate_to: 127.0.0.1
+  run_once: true
+  shell: ansible controller1,controller2,controller3 -m setup
+  tags:
+    - facts
+    - networking
+
 - name: Construct DNS Servers Fact (eth)
   set_fact:
     dns_servers: "{{hostvars['controller1']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller2']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller3']['ansible_eth3']['ipv4']['address']}}"
-  when: ansible_br_mgmt is not defined 
+  when: hostvars['controller1']['ansible_br_mgmt'] is not defined
   tags:
     - networking
     - ubuntu
@@ -114,7 +123,7 @@
 - name: Construct DNS Servers Fact (br_mgmt)
   set_fact:
     dns_servers: "{{hostvars['controller1']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller2']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller3']['ansible_br_flat']['ipv4']['address']}}"
-  when: ansible_br_mgmt is defined 
+  when: hostvars['controller1']['ansible_br_mgmt'] is defined
   tags:
     - networking
     - ubuntu
