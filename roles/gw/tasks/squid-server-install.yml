@@ -29,15 +29,24 @@
   tags:
     - squid
 
+# - name: "Start service"
+#   service:
+#     name: squid
+#     state: restarted
+#     enabled: yes
+#   register: result
+#   until: '"failed" not in result'
+#   retries: 10
+#   delay: 5
+#   tags:
+#     - squid
+
+
 - name: "Start service"
   service:
     name: squid
-    state: restarted
+    state: started
     enabled: yes
-  register: result
-  until: '"failed" not in result'
-  retries: 10
-  delay: 5
   tags:
     - squid
 
