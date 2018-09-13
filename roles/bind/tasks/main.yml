@@ -1,0 +1,253 @@
+---
+
+- name: Update apt sources
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  register: apt_update
+  until: apt_update|success
+  retries: 5
+  delay: 2
+  when: ansible_os_family == "Debian"
+  tags: 
+    - update
+
+- name: Install  Packages
+  apt: name={{ item }} state=present
+  with_items:
+    - bind9
+    - bind9utils
+    - bind9-doc
+  when: ansible_os_family == "Debian"
+  tags:
+    - packages
+    - ubuntu
+
+- name: Enable IPv4
+  template:
+    src: bind9
+    dest: /etc/default/bind9
+    backup: yes
+  notify: restart bind9
+  tags:
+    - ipv4
+
+- name: Show eth0 IP Address
+  debug:
+    var: ansible_eth0.ipv4.address
+    verbosity: 2
+
+- name: Show eth1 IP Address
+  debug:
+    var: ansible_eth1.ipv4.address
+    verbosity: 2
+
+- name: Refresh Facts # Only realy required when testing on individual hosts as play requries facts from all three controllers
+  become: no
+  delegate_to: 127.0.0.1
+  run_once: true
+  shell: ansible controller1,controller2,controller3 -m setup
+  tags:
+    - facts
+    - bind_config_files
+
+
+- name: update named.conf.options (eth)
+  template:
+    src: named.conf.options.{{ansible_hostname}}.eth
+    dest: /etc/bind/named.conf.options
+    backup: yes
+  notify: restart bind9
+  when: ansible_br_mgmt is not defined
+  tags:
+    - bind_config_files
+    - named_conf_options
+
+- name: update named.conf.options (br_mgmt)
+  template:
+    src: named.conf.options.{{ansible_hostname}}.br_mgmt
+    dest: /etc/bind/named.conf.options
+    backup: yes
+  notify: restart bind9
+  when: ansible_br_mgmt is defined
+  tags:
+    - bind_config_files
+    - named_conf_options
+
+
+
+- name: Update named.conf.local (master br_mgmt)
+  template:
+    src: named.conf.local.master.br_mgmt
+    dest: /etc/bind/named.conf.local
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is defined)
+  notify: restart bind9
+  tags:
+    - bind_config_files
+    - named_conf_local
+
+- name: Update named.conf.local (master eth)
+  template:
+    src: named.conf.local.master.eth
+    dest: /etc/bind/named.conf.local
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is not defined)
+  notify: restart bind9
+  tags:
+    - bind_config_files
+    - named_conf_local
+
+- name: Update named.conf.local (slaves br_mgmt)
+  template:
+    src: named.conf.local.slaves.br_mgmt
+    dest: /etc/bind/named.conf.local
+    backup: yes
+  when: ((inventory_hostname | search("controller2")) or (inventory_hostname | search("controller3"))) and (ansible_br_mgmt is defined)
+  notify: restart bind9
+  tags:
+    - bind_config_files
+    - named_conf_local
+
+- name: Update named.conf.local (slaves eth)
+  template:
+    src: named.conf.local.slaves.eth
+    dest: /etc/bind/named.conf.local
+    backup: yes
+  when: ((inventory_hostname | search("controller2")) or (inventory_hostname | search("controller3"))) and (ansible_br_mgmt is not defined)
+  notify: restart bind9
+  tags:
+    - bind_config_files
+    - named_conf_local
+
+
+- name: Create Zones Directory
+  file:
+    path: /etc/bind/zones
+    state: directory
+    mode: 0755
+  when: inventory_hostname | search("controller1")
+  tags:
+    - bind_dirs
+
+- name: Get Unix Time
+  shell: echo $(date +%s)
+  register: unix_time_stamp
+  delegate_to: localhost
+  run_once: true
+  become: no
+  tags:
+    - serial
+    - zone_files
+
+- name: Setting Execution Facts
+  set_fact:
+    bind_zone_serial: "{{ unix_time_stamp.stdout }}"
+  run_once: true
+  become: no
+  tags:
+    - serial
+    - zone_files
+
+- name: Show Time Stamp Fact
+  debug:
+    var: "{{ bind_zone_serial }}"
+    verbosity: 2
+  tags:
+    - serial
+    - zone_files
+
+- name: Refresh Facts
+  become: no
+  delegate_to: 127.0.0.1
+  run_once: true
+  shell: ansible all -m setup
+  tags:
+    - facts
+    - zone_files
+
+
+### br_mgmt zone fles ###
+
+- name: Update db.br-mgmt.openstack-multa.local (br_mgmt)
+  template:
+    src: db.br-mgmt.openstack-multa.local.br_mgmt
+    dest: /etc/bind/zones/db.br-mgmt.openstack-multa.local
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is defined)
+  notify: restart bind9
+  tags:
+    - zone_files
+
+- name: Update db.br-mgmt.openstack-multa.local (eth)
+  template:
+    src: db.br-mgmt.openstack-multa.local.eth
+    dest: /etc/bind/zones/db.br-mgmt.openstack-multa.local
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is not defined)
+  notify: restart bind9
+  tags:
+    - zone_files
+
+- name: Update db.236.29.172 (br_mgmt)
+  template:
+    src: db.236.29.172.br_mgmt
+    dest: /etc/bind/zones/db.236.29.172
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is defined)
+  notify: restart bind9
+  tags:
+    - zone_files
+
+- name: Update db.236.29.172 (eth)
+  template:
+    src: db.236.29.172.eth
+    dest: /etc/bind/zones/db.236.29.172
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is not defined)
+  notify: restart bind9
+  tags:
+    - zone_files
+
+
+### br_storage zone fles ###
+
+- name: Update db.br-storage.openstack-multa.local (br_mgmt)
+  template:
+    src: db.br-storage.openstack-multa.local.br_mgmt
+    dest: /etc/bind/zones/db.br-storage.openstack-multa.local
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is defined)
+  notify: restart bind9
+  tags:
+    - zone_files
+
+- name: Update db.br-storage.openstack-multa.local (eth)
+  template:
+    src: db.br-storage.openstack-multa.local.eth
+    dest: /etc/bind/zones/db.br-storage.openstack-multa.local
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is not defined)
+  notify: restart bind9
+  tags:
+    - zone_files
+
+- name: Update db.244.29.172 (br_mgmt)
+  template:
+    src: db.244.29.172.br_mgmt
+    dest: /etc/bind/zones/db.244.29.172
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is defined)
+  notify: restart bind9
+  tags:
+    - zone_files
+
+- name: Update db.244.29.172 (eth)
+  template:
+    src: db.244.29.172.eth
+    dest: /etc/bind/zones/db.244.29.172
+    backup: yes
+  when: (inventory_hostname | search("controller1")) and (ansible_br_mgmt is not defined)
+  notify: restart bind9
+  tags:
+    - zone_files

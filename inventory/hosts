@@ -30,6 +30,11 @@ console
 [gateway]
 gw
 
+[bind-servers]
+controller1
+controller2
+controller3
+
 [ntp-server]
 controller1
 

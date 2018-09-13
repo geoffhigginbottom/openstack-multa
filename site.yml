@@ -1,8 +1,10 @@
 ---
 - import_playbook: gw.yml
+- import_playbook: proxy-settings.yml
 - import_playbook: volume-groups.yml
 - import_playbook: ntp-server.yml
 - import_playbook: ntp-client.yml
+- import_playbook: bind.yml
 - import_playbook: generate-key.yml
 - import_playbook: fetch-key.yml
 - import_playbook: distribute-key.yml

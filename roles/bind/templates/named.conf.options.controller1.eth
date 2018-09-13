@@ -1,0 +1,38 @@
+//
+// Ansible Configured File
+//
+
+acl "infra" {
+        localhost;
+        {{ bind_encapsulation_cidr }};
+        {{ bind_br_flat_cidr }};
+        {{ bind_br_mgmt_cidr }};
+        {{ bind_br_storage_cidr }};
+        {{ bind_storage_rep_cidr }};
+        {{ bind_br_vxlan_cidr }};
+};
+
+options {
+        directory "/var/cache/bind";
+
+        recursion yes;
+        allow-recursion { infra; };
+        listen-on { ! {{ ansible_eth0.ipv4.address }}; ! {{ ansible_eth1.ipv4.address }}; any; };
+        allow-transfer { {{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }};};
+
+        forwarders {
+                {{ bind_forwarder1 }};
+                {{ bind_forwarder2 }};
+                {{ bind_forwarder3 }};
+                {{ bind_forwarder4 }};
+        };
+
+        //========================================================================
+        // If BIND logs error messages about the root key being expired,
+        // you will need to update your keys.  See https://www.isc.org/bind-keys
+        //========================================================================
+        dnssec-validation auto;
+
+        auth-nxdomain no;    # conform to RFC1035
+        listen-on-v6 { none ; };
+};

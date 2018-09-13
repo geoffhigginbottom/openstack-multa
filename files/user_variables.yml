@@ -25,16 +25,16 @@ debug: false
 lxc_net_mtu: 1450
 bootstrap_host_aio_config: no
 
-lxc_cache_prep_timeout: 3600
-lxc_cache_prep_pre_commands: "rm -f /etc/resolv.conf || true"
-lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf -f"
-#  Above Added to fix an LXC bug, this should be fixed in releases > 17.0.3
+# lxc_cache_prep_timeout: 3600
+# lxc_cache_prep_pre_commands: "rm -f /etc/resolv.conf || true"
+# lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf -f"
+# #  Above Added to fix an LXC bug, this should be fixed in releases > 17.0.3
 
 ## Security
 # keystone_service_adminuri_insecure: true
 # keystone_service_internaluri_insecure: true
 # keystone_service_publicuri_insecure: true
-apply_security_hardening: true
+apply_security_hardening: false
 
 # ## Common Glance Overrides
 # ## https://docs.openstack.org/openstack-ansible-os_swift/pike/configure-swift-glance.html
@@ -77,9 +77,9 @@ generate_fsid: true
 ## ceph-ansible settings
 ## See https://github.com/ceph/ceph-ansible/tree/master/group_vars for
 ## additional configuration options availble.
-monitor_address_block: "172.29.236.0/24"
-public_network: "172.29.236.0/24"
-cluster_network: "172.29.244.0/24"
+monitor_address_block: "172.29.236.0/22"
+public_network: "172.29.236.0/22"
+cluster_network: "172.29.244.0/22"
 osd_scenario: collocated
 journal_size: 10240 # size in MB
 # ceph-ansible automatically creates pools & keys for OpenStack services
@@ -116,10 +116,10 @@ neutron_l3_ha: false
 global_environment_variables:
    HTTP_PROXY: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
    HTTPS_PROXY: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
-   NO_PROXY: "localhost,127.0.0.1,172.29.236.3/22,{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }},{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+   NO_PROXY: "localhost,127.0.0.1,172.29.236.0/22,{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }},{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
    http_proxy: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
    https_proxy: "http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080"
-   no_proxy: "localhost,127.0.0.1,172.29.236.3/22,{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }},{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+   no_proxy: "localhost,127.0.0.1,172.29.236.0/22,{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }},{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
 
 ## HAProxy Options
 haproxy_use_keepalived: false

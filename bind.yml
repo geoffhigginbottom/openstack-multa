@@ -1,0 +1,5 @@
+---
+- hosts: bind-servers
+
+  roles:
+    - bind

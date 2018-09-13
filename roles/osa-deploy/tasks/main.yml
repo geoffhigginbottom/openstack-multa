@@ -78,6 +78,22 @@
   tags: 
     - rsync
 
+- name: Clear Facts
+  meta: clear_facts
+  tags:
+    - facts
+    - user_config
+    - user_variables
+
+- name: Delete Facts Files # force a full facts refresh
+  become: no
+  delegate_to: localhost
+  shell: rm /tmp/facts_cache/*
+  tags:
+    - facts
+    - user_config
+    - user_variables
+
 - name: Gather facts
   become: no
   delegate_to: localhost
@@ -86,6 +102,132 @@
     - facts
     - user_config
     - user_variables
+
+- name: Debug ceph1 br_mgmt
+  debug:
+    msg: "ceph1 br_mgmt - {{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug ceph2 br_mgmt
+  debug:
+    msg: "ceph2 br_mgmt - {{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug ceph3 br_mgmt
+  debug:
+    msg: "ceph3 br_mgmt - {{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Debug compute1 br_mgmt
+  debug:
+    msg: "compute1 br_mgmt - {{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug compute2 br_mgmt
+  debug:
+    msg: "compute2 br_mgmt - {{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug compute3 br_mgmt
+  debug:
+    msg: "compute3 br_mgmt - {{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Debug console br_mgmt
+  debug:
+    msg: "console br_mgmt - {{ hostvars['console']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Debug controller1 br_mgmt
+  debug:
+    msg: "controller1 br_mgmt - {{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug controller2 br_mgmt
+  debug:
+    msg: "controller2 br_mgmt - {{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug controller3 br_mgmt
+  debug:
+    msg: "controller3 br_mgmt - {{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Debug gw br_mgmt
+  debug:
+    msg: "gw br_mgmt - {{ hostvars['gw']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug lb1 br_mgmt
+  debug:
+    msg: "lb1 br_mgmt - {{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Debug swift1 br_mgmt
+  debug:
+    msg: "swift1 br_mgmt - {{ hostvars['swift1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug swift2 br_mgmt
+  debug:
+    msg: "swift2 br_mgmt - {{ hostvars['swift2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Debug swift3 br_mgmt
+  debug:
+    msg: "swift3 br_mgmt - {{ hostvars['swift3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    verbosity: 2
+  ignore_errors: true
+  tags:
+    - user_config
+
 
 - name: Create openstack_user_config.yml from template
   template:
@@ -121,7 +263,7 @@
 - name: Get Glance Password
   shell: "grep glance_service_password /etc/openstack_deploy/user_secrets.yml | awk '{print $2}'"
   register: user_variables
-  # no_log: true
+  no_log: true
   tags: 
     - user_variables
 
@@ -138,14 +280,6 @@
     backup: yes
   tags:
     - user_variables
-
-# - name: Create cinder.yml from template
-#   template:
-#     src: files/cinder.yml
-#     dest: /etc/openstack_deploy/env.d/cinder.yml
-#     backup: yes
-#   tags:
-#     - cinder
 
 - name: Create swift.yml from template
   template:

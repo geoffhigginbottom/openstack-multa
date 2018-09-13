@@ -20,14 +20,14 @@ iface eth0 inet6 static
     address {{ ansible_default_ipv6.address }}
     netmask {{ ansible_default_ipv6.prefix }}
     gateway {{ ansible_default_ipv6.gateway }}
-    dns-nameservers {{ dns_servers.stdout }}
+    dns-nameservers {{ dns_servers }}
 
 # Label private
 auto eth1
 iface eth1 inet static
     address {{ ansible_eth1.ipv4.address }}
     netmask {{ ansible_eth1.ipv4.netmask }}
-    dns-nameservers {{ dns_servers.stdout }}
+    dns-nameservers {{ dns_servers }}
     post-up route add -net 10.176.0.0 netmask 255.240.0.0 gw {{ service_net_gw.stdout }} || true
     pre-down route del -net 10.176.0.0 netmask 255.240.0.0 gw {{ service_net_gw.stdout }} || true
     post-up route add -net 10.208.0.0 netmask 255.240.0.0 gw {{ service_net_gw.stdout }} || true

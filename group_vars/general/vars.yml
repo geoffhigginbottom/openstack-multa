@@ -29,13 +29,17 @@ project_3_desc: Terraform Demo Project
 project_4: Ansible_Demo
 project_4_desc: Ansible Demo Project
 
-## Only enable this variable when re-deploying a node after the osa-prep.yml playbook has been
-## run against controller1 as this will have removed the eth3 ip address which is referenced 
-## in the ntp-client.yml playbook / template as it is normally run before the osa-prep.yml playbook
-## IMPORTANT - you need to update the IP Address to the correct value - It's the br_mgmt IP of controller1
-## TODO - Add code to handle this automatically!
-# ntp_server_ip: 172.29.236.7
-
+# Bind Settings
+bind_encapsulation_cidr: 10.240.0.0/22
+bind_br_flat_cidr: 172.29.252.0/22
+bind_br_mgmt_cidr: 172.29.236.0/22
+bind_br_storage_cidr: 172.29.244.0/22
+bind_storage_rep_cidr: 172.29.248.0/22
+bind_br_vxlan_cidr: 172.29.240.0/22
+bind_forwarder1: 8.8.8.8
+bind_forwarder2: 8.8.4.4
+bind_forwarder3: 69.20.0.164
+bind_forwarder4: 69.20.0.196
 
 # VPN Settings
 vpn_network: 172.27.224.0 

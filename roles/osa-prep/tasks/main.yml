@@ -92,22 +92,43 @@
     - networking
     - ubuntu
 
-- name: Extract the DNS Servers
-  shell: cat /etc/network/interfaces | grep -m 1 dns-nameservers | awk '{print $2 " " $3}'
-  register: dns_servers
-  when: ansible_br_mgmt is not defined
+
+### Added Bind so the controllers are now be the DNS Servers - IPs are referenced in vars.yml
+# - name: Extract the DNS Servers
+#   shell: cat /etc/network/interfaces | grep -m 1 dns-nameservers | awk '{print $2 " " $3}'
+#   register: dns_servers
+#   when: ansible_br_mgmt is not defined
+#   tags:
+#     - networking
+#     - ubuntu
+
+- name: Construct DNS Servers Fact (eth)
+  set_fact:
+    dns_servers: "{{hostvars['controller1']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller2']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller3']['ansible_eth3']['ipv4']['address']}}"
+  when: ansible_br_mgmt is not defined 
   tags:
     - networking
     - ubuntu
+    - bind
+
+- name: Construct DNS Servers Fact (br_mgmt)
+  set_fact:
+    dns_servers: "{{hostvars['controller1']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller2']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller3']['ansible_br_flat']['ipv4']['address']}}"
+  when: ansible_br_mgmt is defined 
+  tags:
+    - networking
+    - ubuntu
+    - bind
 
 - name: Debug DNS Servers
   debug: 
-    var: dns_servers.stdout
+    var: dns_servers
     verbosity: 2
   when: ansible_br_mgmt is not defined
   tags:
     - networking
     - ubuntu
+    - bind
 
 - name: Configure GW Bridges
   template:
@@ -118,7 +139,8 @@
   register: bridges_gw
   tags:
     - networking
-    - ubuntu
+    - ubuntu 
+    - gw
 
 - name: Debug Networking GW
   debug: 
@@ -127,7 +149,8 @@
   when: (ansible_os_family == "Debian") and (inventory_hostname is search("gw"))
   tags:
     - networking
-    - ubuntu
+    - ubuntu 
+    - gw
 
 # # generates the reboot-required.pkgs
 # # used just for testing reboot code which follows
@@ -138,6 +161,7 @@
 #     dest: /var/run/reboot-required.pkgs
 #   tags:
 #     - test
+#     - networking
 
 - name: Is Reboot Required
   stat: 
@@ -194,15 +218,141 @@
   tags:
     - mail
 
-- name: Gather facts for gw
-  become: no
-  delegate_to: localhost
-  shell: ansible gw -m setup
+################################### VPN GW IP start #########################################
+##### Following section is a very convoluted way of identifying the correct ip of 
+##### the VPN GW, required as there are issues setting it reliably as it changes
+##### as part of this playbook and some nodes detect it OK, but others do not.  
+##### The IP required is initially linked to eth5, but following reboot of GW it is then
+##### liked to br_flat however the change is not always detected on the first run on this play.
+##### There must be a better way of doing this, but for now this appears to work
+#############################################################################################
+
+# - name: Remove GW Cache file # required to clear GW Facts as next step was not refreshing them
+#   become: no
+#   delegate_to: 127.0.0.1
+#   run_once: true
+#   shell: rm -f -r /tmp/facts_cache/gw
+#   tags:
+#     - networking
+#     - ubuntu
+#     - vpn
+#     - facts
+#     - routes
+
+
+# - name: Gather updated network facts from GW
+#   setup:
+#   delegate_to: 127.0.0.1
+#   become: no
+#   # delegate_to: "{{item}}"
+#   # run_once: true
+#   with_items: gw
+#   # when: hostvars[item]['ansible_br_flat_ipv4'] is not defined
+#   tags: 
+#     - networking
+#     - ubuntu
+#     - vpn
+#     - facts
+#     - routes
+
+- name: Clear Facts # just clearing the GW facts file (above) was not sufficient
+  meta: clear_facts
   tags:
     - networking
     - ubuntu
     - vpn
-    
+    - facts
+
+- name: Refresh Facts
+  become: no
+  delegate_to: 127.0.0.1
+  run_once: true
+  shell: ansible all -m setup
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+    - facts
+
+- name: Debug ansible_br_flat
+  debug:
+    var: hostvars['gw']['ansible_br_flat']['ipv4']['address']
+    verbosity: 2
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+    - facts
+
+- name: Debug ansible_eth5
+  debug:
+    var: hostvars['gw']['ansible_eth5']['ipv4']['address']
+    verbosity: 2
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+    - facts
+
+- name: Set VPN GW Fact (br_flat)
+  set_fact:
+    vpn_gw_br_flat: "{{hostvars['gw']['ansible_br_flat']['ipv4']['address']}}"
+  ignore_errors: yes
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+    - facts
+
+- name: Debug VPN GW Fact (br_flat)
+  debug:
+    var: vpn_gw_br_flat
+    verbosity: 2
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+    - facts
+
+- name: Set VPN GW Fact (eth5)
+  set_fact:
+    vpn_gw_eth5: "{{hostvars['gw']['ansible_eth5']['ipv4']['address']}}"
+  ignore_errors: yes
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+    - facts
+
+- name: Debug VPN GW Fact (eth5)
+  debug:
+    var: vpn_gw_eth5
+    verbosity: 2
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+
+- name: Set VPN GW (eth5)
+  set_fact:
+    vpn_gw: "{{vpn_gw_eth5}}"
+  when: vpn_gw_br_flat is undefined
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+
+- name: Set VPN GW (br_flat)
+  set_fact:
+    vpn_gw: "{{vpn_gw_br_flat}}"
+  when: vpn_gw_eth5 is undefined
+  tags:
+    - networking
+    - ubuntu
+    - vpn
+
+################################### VPN GW IP end #########################################
+
 - name: Add routes file to controllers
   template:
     src: files/routes
@@ -533,7 +683,11 @@
   retries: 30
   delay: 10
   become: false
+<<<<<<< HEAD
   when: (inventory_hostname is search("Ceph")) and (stat_result.stat.exists == True) or (inventory_hostname is search("Ceph")) and (bridges_Ceph.changed == true)
+=======
+  when: (inventory_hostname | search("ceph")) and (stat_result.stat.exists == True) or (inventory_hostname | search("ceph")) and (bridges_ceph.changed == true)
+>>>>>>> master
   tags:
     - upgrade
     - networking

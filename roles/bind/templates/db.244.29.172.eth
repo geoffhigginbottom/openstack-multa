@@ -1,0 +1,33 @@
+;
+; Ansible Configured File
+; Reverse Zone File for 244.29.172
+;
+$TTL    604800
+@       IN      SOA     controller1.br-storage.openstack-multa.local. admin.br-storage.openstack-multa.local. (
+                        {{ bind_zone_serial }}         ; Serial
+                        3h         ; Refresh
+                        1h         ; Retry
+                        1w         ; Expire
+                        1h )       ; Negative Cache TTL
+;
+; name servers - NS records
+     IN      NS      controller1.br-storage.openstack-multa.local.
+     IN      NS      controller2.br-storage.openstack-multa.local.
+     IN      NS      controller3.br-storage.openstack-multa.local.
+
+; PTR Records
+{{ hostvars['ceph1']['ansible_eth4']['ipv4']['address'].split('.')[-1][-3:] }}         IN      PTR     ceph1.br-storage.openstack-multa.local.    ; {{ hostvars['ceph1']['ansible_eth4']['ipv4']['address'] }}
+{{ hostvars['ceph2']['ansible_eth4']['ipv4']['address'].split('.')[-1][-3:] }}         IN      PTR     ceph2.br-storage.openstack-multa.local.    ; {{ hostvars['ceph2']['ansible_eth4']['ipv4']['address'] }}
+{{ hostvars['ceph3']['ansible_eth4']['ipv4']['address'].split('.')[-1][-3:] }}         IN      PTR     ceph3.br-storage.openstack-multa.local.    ; {{ hostvars['ceph3']['ansible_eth4']['ipv4']['address'] }}
+
+{{ hostvars['compute1']['ansible_eth6']['ipv4']['address'].split('.')[-1][-3:] }}      IN      PTR     compute1.br-storage.openstack-multa.local.    ; {{ hostvars['compute1']['ansible_eth6']['ipv4']['address'] }}
+{{ hostvars['compute2']['ansible_eth6']['ipv4']['address'].split('.')[-1][-3:] }}      IN      PTR     compute2.br-storage.openstack-multa.local.    ; {{ hostvars['compute2']['ansible_eth6']['ipv4']['address'] }}
+{{ hostvars['compute3']['ansible_eth6']['ipv4']['address'].split('.')[-1][-3:] }}      IN      PTR     compute3.br-storage.openstack-multa.local.    ; {{ hostvars['compute3']['ansible_eth6']['ipv4']['address'] }}
+
+{{ hostvars['controller1']['ansible_eth6']['ipv4']['address'].split('.')[-1][-3:] }}   IN      PTR     controller1.br-storage.openstack-multa.local.    ; {{ hostvars['controller1']['ansible_eth6']['ipv4']['address'] }}
+{{ hostvars['controller2']['ansible_eth6']['ipv4']['address'].split('.')[-1][-3:] }}   IN      PTR     controller2.br-storage.openstack-multa.local.    ; {{ hostvars['controller2']['ansible_eth6']['ipv4']['address'] }}
+{{ hostvars['controller3']['ansible_eth6']['ipv4']['address'].split('.')[-1][-3:] }}   IN      PTR     controller3.br-storage.openstack-multa.local.    ; {{ hostvars['controller3']['ansible_eth6']['ipv4']['address'] }}
+
+{{ hostvars['swift1']['ansible_eth4']['ipv4']['address'].split('.')[-1][-3:] }}        IN      PTR     swift1.br-storage.openstack-multa.local.    ; {{ hostvars['swift1']['ansible_eth4']['ipv4']['address'] }}
+{{ hostvars['swift2']['ansible_eth4']['ipv4']['address'].split('.')[-1][-3:] }}        IN      PTR     swift2.br-storage.openstack-multa.local.    ; {{ hostvars['swift2']['ansible_eth4']['ipv4']['address'] }}
+{{ hostvars['swift3']['ansible_eth4']['ipv4']['address'].split('.')[-1][-3:] }}        IN      PTR     swift3.br-storage.openstack-multa.local.    ; {{ hostvars['swift3']['ansible_eth4']['ipv4']['address'] }}

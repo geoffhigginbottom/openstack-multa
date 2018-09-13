@@ -24,7 +24,7 @@
    - software-properties-common
    - ubuntu-desktop
    - x11vnc
-   - python-openstackclient
+   # - python-openstackclient
   when: ansible_os_family == "Debian"
   tags: 
     - packages
@@ -72,28 +72,43 @@
     - pip
     - ubuntu
 
-# - name: Install Shade
-#   pip:
-#     name: shade
-#     state: forcereinstall
-#   tags:
-#     - pip
-#     - ubuntu
-#     - shade
-
-# Ansible PIP module was failing to install shade so had to revert to using command line
-- name: Install Shade
-  command: pip install shade
+- name: Upgrade PIP
+  command: pip install --upgrade pip
   tags:
+    - pip
+
+- name: Install Shade
+  pip:
+    name: shade
+    state: forcereinstall
+  tags:
+    - pip
+    - ubuntu
     - shade
 
-- name: Install Ansible
-  package:
-    name: ansible
-    state: present
+- name: Install OpenStack-Client
+  pip:
+    name: python-openstackclient
   tags:
-    - packages
+    - pip
     - ubuntu
+    - python-openstackclient
+
+- name: Install OpenStack-SDK
+  pip:
+    name: openstacksdk
+  tags:
+    - pip
+    - ubuntu
+    - openstacksdk
+
+- name: Install ansible
+  pip:
+    name: ansible
+  tags:
+    - pip
+    - ubuntu
+    - ansible
 
 - name: Upgrade CentOS
   yum:
