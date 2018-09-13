@@ -683,11 +683,7 @@
   retries: 30
   delay: 10
   become: false
-<<<<<<< HEAD
-  when: (inventory_hostname is search("Ceph")) and (stat_result.stat.exists == True) or (inventory_hostname is search("Ceph")) and (bridges_Ceph.changed == true)
-=======
   when: (inventory_hostname | search("ceph")) and (stat_result.stat.exists == True) or (inventory_hostname | search("ceph")) and (bridges_ceph.changed == true)
->>>>>>> master
   tags:
     - upgrade
     - networking
