@@ -4,11 +4,11 @@
 ;
 $TTL    604800
 @       IN      SOA     controller1.br-mgmt.openstack-multa.local. admin.br-mgmt.openstack-multa.local. (
-                              {{ bind_zone_serial }}         ; Serial
-                         604800         ; Refresh
-                          86400         ; Retry
-                        2419200         ; Expire
-                         604800 )       ; Negative Cache TTL
+                        {{ bind_zone_serial }}         ; Serial
+                        3h         ; Refresh
+                        1h         ; Retry
+                        1w         ; Expire
+                        1h )       ; Negative Cache TTL
 ;
 ; name servers - NS records
      IN      NS      controller1.br-mgmt.openstack-multa.local.

@@ -18,7 +18,6 @@ options {
         recursion yes;
         allow-recursion { infra; };
         listen-on { ! {{ ansible_eth0.ipv4.address }}; ! {{ ansible_eth1.ipv4.address }}; any; };
-//        allow-transfer { {{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}; {{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }};};
 
         forwarders {
                 {{ bind_forwarder1 }};

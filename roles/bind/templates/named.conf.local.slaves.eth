@@ -2,52 +2,51 @@
 // Ansible Configured File 
 //
 
-
 zone "br-mgmt.openstack-multa.local" {
     type slave;
     notify no;
-    file "slaves/db.br-mgmt.openstack-multa.local";
+    file "/var/lib/bind/slaves/db.br-mgmt.openstack-multa.local";
     masters { {{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}; };
 };
 
 zone "236.29.172.in-addr.arpa" {
     type slave;
     notify no;
-    file "slaves/db.236.29.172";
+    file "/var/lib/bind/slaves/db.236.29.172";
     masters { {{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}; };
 };
 
 # zone "237.29.172.in-addr.arpa" {
 #     type slave;
 #     notify no;
-#     file "slaves/db.237.29.172";
+#     file "/var/lib/bind/slaves/db.237.29.172";
 #     masters { {{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}; };
 # };
 
 # zone "238.29.172.in-addr.arpa" {
 #     type slave;
 #     notify no;
-#     file "slaves/db.238.29.172";
+#     file "/var/lib/bind/slaves/db.238.29.172";
 #     masters { {{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}; };
 # };
 
 # zone "239.29.172.in-addr.arpa" {
 #     type slave;
 #     notify no;
-#     file "slaves/db.239.29.172";
+#     file "/var/lib/bind/slaves/db.239.29.172";
 #     masters { {{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}; };
 # };
 
 zone "br-storage.openstack-multa.local" {
     type slave;
     notify no;
-    file "slaves/db.br-storage.openstack-multa.local";
+    file "/var/lib/bind/slaves/db.br-storage.openstack-multa.local";
     masters { {{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}; };
 };
 
 zone "244.29.172.in-addr.arpa" {
     type slave;
     notify no;
-    file "slaves/db.244.29.172";
+    file "/var/lib/bind/slaves/db.244.29.172";
     masters { {{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}; };
 };
