@@ -16,7 +16,7 @@
   lvg:
     vg: lxc
     pvs: "{{ controller_lxc_vg }}"
-  when: inventory_hostname | search("controller")
+  when: inventory_hostname is search("controller")
   tags:
     - controller
 
@@ -24,7 +24,7 @@
   lvg:
     vg: cinder-volumes
     pvs: "{{ compute_cinder_vg }}"
-  when: inventory_hostname | search("compute")
+  when: inventory_hostname is search("compute")
   tags:
     - compute
 
@@ -32,7 +32,7 @@
 #   lvg:
 #     vg: cinder-volumes
 #     pvs: "{{ storage_cinder_vg }}"
-#   when: inventory_hostname | search("cinder")
+#   when: inventory_hostname is search("cinder")
 #   tags:
 #     - cinder
     

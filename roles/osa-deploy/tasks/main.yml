@@ -19,6 +19,7 @@
   shell: ansible gw -m setup
   tags:
     - facts
+    - bootstrap-ansible
 
 - name: Bootstrap Ansible
   shell: ./scripts/bootstrap-ansible.sh
@@ -308,7 +309,7 @@
   shell: openstack-ansible setup-hosts.yml
   args:
     chdir: /opt/openstack-ansible/playbooks
-    creates: /var/log/lxc/lxc-monitord.log
+    # creates: /var/log/lxc/lxc-monitord.log
   tags: 
     - setup_hosts
 

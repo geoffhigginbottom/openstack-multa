@@ -1,11 +1,12 @@
+ansible-playbook proxy-settings.yml --limit gw
 ansible-playbook ntp-client.yml --limit gw
 ansible-playbook distribute-key.yml --limit gw
 ansible-playbook osa-prep.yml --limit gw
 ansible-playbook gw.yml
 
 
-
+ansible-playbook proxy-settings.yml --limit console
 ansible-playbook ntp-client.yml --limit console
 ansible-playbook distribute-key.yml --limit console
 ansible-playbook osa-prep.yml --limit console
-ansible-playbook console.yml
+ansible-playbook console-vm.yml

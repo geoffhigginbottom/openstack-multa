@@ -42,10 +42,10 @@
 #     - squid
 
 
-- name: "Start service"
+- name: "re-start squid service"
   service:
     name: squid
-    state: started
+    state: restarted
     enabled: yes
   tags:
     - squid

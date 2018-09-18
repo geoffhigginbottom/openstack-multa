@@ -114,7 +114,7 @@
 - name: Construct DNS Servers Fact (eth)
   set_fact:
     dns_servers: "{{hostvars['controller1']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller2']['ansible_eth3']['ipv4']['address']}} {{hostvars['controller3']['ansible_eth3']['ipv4']['address']}}"
-  when: hostvars['controller1']['ansible_br_mgmt'] is not defined
+  when: hostvars['controller1']['ansible_br_mgmt'] is not defined and dns_servers is not defined
   tags:
     - networking
     - ubuntu
@@ -122,8 +122,8 @@
 
 - name: Construct DNS Servers Fact (br_mgmt)
   set_fact:
-    dns_servers: "{{hostvars['controller1']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller2']['ansible_br_flat']['ipv4']['address']}} {{hostvars['controller3']['ansible_br_flat']['ipv4']['address']}}"
-  when: hostvars['controller1']['ansible_br_mgmt'] is defined
+    dns_servers: "{{hostvars['controller1']['ansible_br_mgmt']['ipv4']['address']}} {{hostvars['controller2']['ansible_br_mgmt']['ipv4']['address']}} {{hostvars['controller3']['ansible_br_mgmt']['ipv4']['address']}}"
+  when: hostvars['controller1']['ansible_br_mgmt'] is defined and dns_servers is not defined
   tags:
     - networking
     - ubuntu
@@ -133,7 +133,6 @@
   debug: 
     var: dns_servers
     verbosity: 2
-  when: ansible_br_mgmt is not defined
   tags:
     - networking
     - ubuntu
@@ -692,7 +691,7 @@
   retries: 30
   delay: 10
   become: false
-  when: (inventory_hostname | search("ceph")) and (stat_result.stat.exists == True) or (inventory_hostname | search("ceph")) and (bridges_ceph.changed == true)
+  when: (inventory_hostname is search("ceph")) and (stat_result.stat.exists == True) or (inventory_hostname is search("ceph")) and (bridges_ceph.changed == true)
   tags:
     - upgrade
     - networking

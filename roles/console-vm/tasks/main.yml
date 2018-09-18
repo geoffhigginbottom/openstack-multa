@@ -1,10 +1,5 @@
 ---
 
-# - name: Use facts module to get latest information
-#   setup:
-#   tags:
-#     - facts
-
 - name: Update apt sources
   apt:
     update_cache: yes
@@ -16,15 +11,19 @@
   when: ansible_os_family == "Debian"
   tags: 
     - packages
-    - ubuntu
+
+- name: Upgrade Ubuntu
+  apt: upgrade=dist
+  when: ansible_os_family == "Debian"
+  tags:
+    - packages
 
 - name: Install Packages
   package: name={{ item }} state=present
   with_items:
    - software-properties-common
-   - ubuntu-desktop
-   - x11vnc
-   # - python-openstackclient
+   # - ubuntu-desktop
+   # - x11vnc
   when: ansible_os_family == "Debian"
   tags: 
     - packages
@@ -35,16 +34,14 @@
     comment: '{{ console_user_comment }}'
     groups: sudo
     password: "{{ console_user_pwd }}"
-    # password: $6$/NhR3b1i338$0aGHE.aMEvDDZGurVI7YH1qs3iIlOw9xf2g7f0elx4qexprz79Sq.IX9dHGvwRUJ6zuYkDuZAgyAvXl4QAWQh/
   tags:
     - console-user
 
-# - name: Setup Console User
-#   user:
-#     name: '{{ console_user_name }}'
-#     state: absent
-#   tags:
-#     - console-user
+- name: Add PPA Repo
+  apt_repository: 
+    repo: 'ppa:ansible/ansible'
+  tags: 
+    - packages
 
 - name: Update apt sources
   apt:
@@ -54,13 +51,21 @@
   retries: 5
   delay: 2
   tags: 
-    - update_ansible
+    - packages
 
-- name: Add PPA Repo
-  apt_repository: 
-    repo: 'ppa:ansible/ansible'
+- name: Install Packages
+  package: name={{ item }} state=present
+  with_items:
+   - ansible
+   - python-openstackclient
+   - python-shade
+  when: ansible_os_family == "Debian"
   tags: 
     - packages
+
+
+
+
 
 - name: Install Pip
   apt: name={{ item }} state=present
@@ -72,43 +77,58 @@
     - pip
     - ubuntu
 
-- name: Upgrade PIP
-  command: pip install --upgrade pip
+- name: Upgrade OpenStack-Client
+  command: pip install --upgrade python-openstackclient
   tags:
     - pip
 
-- name: Install Shade
-  pip:
-    name: shade
-    state: forcereinstall
+- name: Upgrade heat-client
+  command: pip install --upgrade python-heatclient
   tags:
     - pip
-    - ubuntu
-    - shade
 
-- name: Install OpenStack-Client
-  pip:
-    name: python-openstackclient
+- name: Upgrade ironic-client
+  command: pip install --upgrade python-ironiccclient
   tags:
     - pip
-    - ubuntu
-    - python-openstackclient
 
-- name: Install OpenStack-SDK
-  pip:
-    name: openstacksdk
-  tags:
-    - pip
-    - ubuntu
-    - openstacksdk
+# - name: Upgrade PIP
+#   command: pip install --upgrade pip
+#   tags:
+#     - pip
 
-- name: Install ansible
-  pip:
-    name: ansible
-  tags:
-    - pip
-    - ubuntu
-    - ansible
+# - name: Install Shade
+#   pip:
+#     name: shade
+#     state: forcereinstall
+#   tags:
+#     - pip
+#     - ubuntu
+#     - shade
+
+# - name: Install OpenStack-Client
+#   pip:
+#     name: python-openstackclient
+#   tags:
+#     - pip
+#     - ubuntu
+#     - python-openstackclient
+
+# - name: Install OpenStack-SDK
+#   pip:
+#     name: openstacksdk
+#   tags:
+#     - pip
+#     - ubuntu
+#     - openstacksdk
+
+# - name: Install ansible
+#   pip:
+#     name: ansible
+#   tags:
+#     - pip
+#     - ubuntu
+#     - ansible
 
 - name: Upgrade CentOS
   yum:
