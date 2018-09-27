@@ -4,7 +4,7 @@ osa_repo: 'https://github.com/openstack/openstack-ansible.git'
 # osa_version: stable/queens
 osa_version: stable/pike
 osa_destination: /opt/openstack-ansible
-git_force: no
+git_force: yes
 
 service_net_address: 10.208.0.0
 
@@ -30,17 +30,17 @@ project_4: Ansible_Demo
 project_4_desc: Ansible Demo Project
 
 # Bind Settings
-bind_encapsulation_cidr: 10.240.0.0/22
-bind_br_flat_cidr: 172.29.252.0/22
-bind_br_mgmt_cidr: 172.29.236.0/22
-bind_br_storage_cidr: 172.29.244.0/22
-bind_storage_rep_cidr: 172.29.248.0/22
-bind_br_vxlan_cidr: 172.29.240.0/22
-bind_forwarder1: 8.8.8.8
-bind_forwarder2: 8.8.4.4
-bind_forwarder3: 69.20.0.164
-bind_forwarder4: 69.20.0.196
-# dns_servers: 69.20.0.164 69.20.0.196 #Only requried when Bind is not deployed - comment out this line if Bind is being deployed
+# bind_encapsulation_cidr: 10.240.0.0/22
+# bind_br_flat_cidr: 172.29.252.0/22
+# bind_br_mgmt_cidr: 172.29.236.0/22
+# bind_br_storage_cidr: 172.29.244.0/22
+# bind_storage_rep_cidr: 172.29.248.0/22
+# bind_br_vxlan_cidr: 172.29.240.0/22
+# bind_forwarder1: 8.8.8.8
+# bind_forwarder2: 8.8.4.4
+# bind_forwarder3: 69.20.0.164
+# bind_forwarder4: 69.20.0.196
+dns_servers: 69.20.0.164 69.20.0.196 #Only requried when Bind is not deployed - comment out this line if Bind is being deployed, and comment out the Bind lines above etc
 
 
 # VPN Settings
