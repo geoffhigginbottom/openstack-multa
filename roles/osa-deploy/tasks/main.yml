@@ -25,9 +25,9 @@
   shell: ./scripts/bootstrap-ansible.sh
   args:
     chdir: /opt/openstack-ansible
-  environment:
-    http_proxy: http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080
-  when: bootstrap.stat.exists == false
+  # environment:
+  #   http_proxy: http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080
+  # when: bootstrap.stat.exists == false
   tags: 
     - bootstrap-ansible
 
@@ -86,14 +86,14 @@
     - user_config
     - user_variables
 
-- name: Delete Facts Files # force a full facts refresh
-  become: no
-  delegate_to: localhost
-  shell: rm /tmp/facts_cache/*
-  tags:
-    - facts
-    - user_config
-    - user_variables
+# - name: Delete Facts Files # force a full facts refresh
+#   become: no
+#   delegate_to: localhost
+#   shell: rm /tmp/facts_cache/*
+#   tags:
+#     - facts
+#     - user_config
+#     - user_variables
 
 - name: Gather facts
   become: no
@@ -104,130 +104,130 @@
     - user_config
     - user_variables
 
-- name: Debug ceph1 br_mgmt
-  debug:
-    msg: "ceph1 br_mgmt - {{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug ceph1 br_mgmt
+#   debug:
+#     msg: "ceph1 br_mgmt - {{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
-- name: Debug ceph2 br_mgmt
-  debug:
-    msg: "ceph2 br_mgmt - {{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug ceph2 br_mgmt
+#   debug:
+#     msg: "ceph2 br_mgmt - {{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
-- name: Debug ceph3 br_mgmt
-  debug:
-    msg: "ceph3 br_mgmt - {{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
-
-
-- name: Debug compute1 br_mgmt
-  debug:
-    msg: "compute1 br_mgmt - {{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
-
-- name: Debug compute2 br_mgmt
-  debug:
-    msg: "compute2 br_mgmt - {{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
-
-- name: Debug compute3 br_mgmt
-  debug:
-    msg: "compute3 br_mgmt - {{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug ceph3 br_mgmt
+#   debug:
+#     msg: "ceph3 br_mgmt - {{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
 
-- name: Debug console br_mgmt
-  debug:
-    msg: "console br_mgmt - {{ hostvars['console']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug compute1 br_mgmt
+#   debug:
+#     msg: "compute1 br_mgmt - {{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
+
+# - name: Debug compute2 br_mgmt
+#   debug:
+#     msg: "compute2 br_mgmt - {{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
+
+# - name: Debug compute3 br_mgmt
+#   debug:
+#     msg: "compute3 br_mgmt - {{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
 
-- name: Debug controller1 br_mgmt
-  debug:
-    msg: "controller1 br_mgmt - {{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
-
-- name: Debug controller2 br_mgmt
-  debug:
-    msg: "controller2 br_mgmt - {{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
-
-- name: Debug controller3 br_mgmt
-  debug:
-    msg: "controller3 br_mgmt - {{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug console br_mgmt
+#   debug:
+#     msg: "console br_mgmt - {{ hostvars['console']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
 
-- name: Debug gw br_mgmt
-  debug:
-    msg: "gw br_mgmt - {{ hostvars['gw']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug controller1 br_mgmt
+#   debug:
+#     msg: "controller1 br_mgmt - {{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
-- name: Debug lb1 br_mgmt
-  debug:
-    msg: "lb1 br_mgmt - {{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug controller2 br_mgmt
+#   debug:
+#     msg: "controller2 br_mgmt - {{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
+
+# - name: Debug controller3 br_mgmt
+#   debug:
+#     msg: "controller3 br_mgmt - {{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
 
-- name: Debug swift1 br_mgmt
-  debug:
-    msg: "swift1 br_mgmt - {{ hostvars['swift1']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug gw br_mgmt
+#   debug:
+#     msg: "gw br_mgmt - {{ hostvars['gw']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
-- name: Debug swift2 br_mgmt
-  debug:
-    msg: "swift2 br_mgmt - {{ hostvars['swift2']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+# - name: Debug lb1 br_mgmt
+#   debug:
+#     msg: "lb1 br_mgmt - {{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
-- name: Debug swift3 br_mgmt
-  debug:
-    msg: "swift3 br_mgmt - {{ hostvars['swift3']['ansible_br_mgmt']['ipv4']['address'] }}"
-    verbosity: 2
-  ignore_errors: true
-  tags:
-    - user_config
+
+# - name: Debug swift1 br_mgmt
+#   debug:
+#     msg: "swift1 br_mgmt - {{ hostvars['swift1']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
+
+# - name: Debug swift2 br_mgmt
+#   debug:
+#     msg: "swift2 br_mgmt - {{ hostvars['swift2']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
+
+# - name: Debug swift3 br_mgmt
+#   debug:
+#     msg: "swift3 br_mgmt - {{ hostvars['swift3']['ansible_br_mgmt']['ipv4']['address'] }}"
+#     verbosity: 2
+#   ignore_errors: true
+#   tags:
+#     - user_config
 
 
 - name: Create openstack_user_config.yml from template
@@ -332,63 +332,63 @@
   tags: 
     - os-nova-install
 
-- name: Sending a status update e-mail
-  mail:
-    host: '{{ host }}'
-    port: '{{ port }}'
-    secure:  '{{ secure }}'
-    username: '{{ username }}'
-    password: '{{ password }}'
-    from: '{{ from }}'
-    to: '{{ to }}'
-    subject: '{{ subject_prefix }} Running setup-infrastructure'
-    body: setup-infrastructure.yml has commenced
-  when: send_mail | bool
-  tags:
-    - mail
-- name: Run setup-infrastructure.yml
-  shell: openstack-ansible setup-infrastructure.yml
-  args:
-    chdir: /opt/openstack-ansible/playbooks
-    #creates: /var/log/lxc
-  tags: 
-    - setup_infrastructure
+# - name: Sending a status update e-mail
+#   mail:
+#     host: '{{ host }}'
+#     port: '{{ port }}'
+#     secure:  '{{ secure }}'
+#     username: '{{ username }}'
+#     password: '{{ password }}'
+#     from: '{{ from }}'
+#     to: '{{ to }}'
+#     subject: '{{ subject_prefix }} Running setup-infrastructure'
+#     body: setup-infrastructure.yml has commenced
+#   when: send_mail | bool
+#   tags:
+#     - mail
+# - name: Run setup-infrastructure.yml
+#   shell: openstack-ansible setup-infrastructure.yml
+#   args:
+#     chdir: /opt/openstack-ansible/playbooks
+#     #creates: /var/log/lxc
+#   tags: 
+#     - setup_infrastructure
 
-- name: Sending a status update e-mail
-  mail:
-    host: '{{ host }}'
-    port: '{{ port }}'
-    secure:  '{{ secure }}'
-    username: '{{ username }}'
-    password: '{{ password }}'
-    from: '{{ from }}'
-    to: '{{ to }}'
-    subject: '{{ subject_prefix }} Running setup-penstack'
-    body: setup-openstack.yml has commenced
-  when: send_mail | bool
-  tags:
-    - mail
+# - name: Sending a status update e-mail
+#   mail:
+#     host: '{{ host }}'
+#     port: '{{ port }}'
+#     secure:  '{{ secure }}'
+#     username: '{{ username }}'
+#     password: '{{ password }}'
+#     from: '{{ from }}'
+#     to: '{{ to }}'
+#     subject: '{{ subject_prefix }} Running setup-penstack'
+#     body: setup-openstack.yml has commenced
+#   when: send_mail | bool
+#   tags:
+#     - mail
 
-- name: Run setup-openstack.yml
-  shell: openstack-ansible setup-openstack.yml
-  args:
-    chdir: /opt/openstack-ansible/playbooks
-    #creates: /var/log/lxc
-  tags: 
-    - setup_openstack
+# - name: Run setup-openstack.yml
+#   shell: openstack-ansible setup-openstack.yml
+#   args:
+#     chdir: /opt/openstack-ansible/playbooks
+#     #creates: /var/log/lxc
+#   tags: 
+#     - setup_openstack
 
-- name: Sending a status update e-mail
-  mail:
-    host: '{{ host }}'
-    port: '{{ port }}'
-    secure:  '{{ secure }}'
-    username: '{{ username }}'
-    password: '{{ password }}'
-    from: '{{ from }}'
-    to: '{{ to }}'
-    subject: '{{ subject_prefix }} OpenStack has been Installed'
-    body: Openstack has been installed and is now accessible (console VM is still being deployed)
-  when: send_mail | bool
-  tags:
-    - mail
+# - name: Sending a status update e-mail
+#   mail:
+#     host: '{{ host }}'
+#     port: '{{ port }}'
+#     secure:  '{{ secure }}'
+#     username: '{{ username }}'
+#     password: '{{ password }}'
+#     from: '{{ from }}'
+#     to: '{{ to }}'
+#     subject: '{{ subject_prefix }} OpenStack has been Installed'
+#     body: Openstack has been installed and is now accessible (console VM is still being deployed)
+#   when: send_mail | bool
+#   tags:
+#     - mail
   
