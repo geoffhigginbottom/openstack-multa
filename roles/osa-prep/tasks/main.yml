@@ -263,13 +263,13 @@
 #     - facts
 #     - routes
 
-- name: Clear Facts # just clearing the GW facts file (above) was not sufficient
-  meta: clear_facts
-  tags:
-    - networking
-    - ubuntu
-    - vpn
-    - facts
+# - name: Clear Facts # just clearing the GW facts file (above) was not sufficient
+#   meta: clear_facts
+#   tags:
+#     - networking
+#     - ubuntu
+#     - vpn
+#     - facts
 
 - name: Refresh Facts
   become: no
@@ -286,78 +286,95 @@
   debug:
     var: hostvars['gw']['ansible_br_flat']['ipv4']['address']
     verbosity: 2
+  run_once: true
   tags:
     - networking
     - ubuntu
     - vpn
     - facts
+    - test
 
 - name: Debug ansible_eth5
   debug:
     var: hostvars['gw']['ansible_eth5']['ipv4']['address']
     verbosity: 2
+  run_once: true
   tags:
     - networking
     - ubuntu
     - vpn
     - facts
+    - test
 
 - name: Set VPN GW Fact (br_flat)
   set_fact:
     vpn_gw_br_flat: "{{hostvars['gw']['ansible_br_flat']['ipv4']['address']}}"
   ignore_errors: yes
+  run_once: true
+  # when: hostvars['controller1']['ansible_br_flat'] is defined
   tags:
     - networking
     - ubuntu
     - vpn
     - facts
+    - test
 
 - name: Debug VPN GW Fact (br_flat)
   debug:
     var: vpn_gw_br_flat
     verbosity: 2
+  run_once: true
   tags:
     - networking
     - ubuntu
     - vpn
     - facts
+    - test
 
 - name: Set VPN GW Fact (eth5)
   set_fact:
     vpn_gw_eth5: "{{hostvars['gw']['ansible_eth5']['ipv4']['address']}}"
   ignore_errors: yes
+  run_once: true
   tags:
     - networking
     - ubuntu
     - vpn
     - facts
+    - test
 
 - name: Debug VPN GW Fact (eth5)
   debug:
     var: vpn_gw_eth5
     verbosity: 2
+  run_once: true
   tags:
     - networking
     - ubuntu
     - vpn
+    - test
 
 - name: Set VPN GW (eth5)
   set_fact:
     vpn_gw: "{{vpn_gw_eth5}}"
   when: vpn_gw_br_flat is undefined
+  run_once: true
   tags:
     - networking
     - ubuntu
     - vpn
+    - test
 
 - name: Set VPN GW (br_flat)
   set_fact:
     vpn_gw: "{{vpn_gw_br_flat}}"
   when: vpn_gw_eth5 is undefined
+  run_once: true
   tags:
     - networking
     - ubuntu
     - vpn
+    - test
 
 ################################### VPN GW IP end #########################################
 
