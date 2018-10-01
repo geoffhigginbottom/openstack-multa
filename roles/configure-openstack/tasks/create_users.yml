@@ -22,6 +22,7 @@
     cloud: '{{ my_cloud_name }}'
     endpoint_type: admin
     state: present
+    domain: default
     name: '{{ my_cloud_username }}'
     password: '{{ my_cloud_password }}'
     update_password: on_create

@@ -3,6 +3,7 @@
 clouds:
 
   {{ my_cloud_name }}:
+    identity_api_version: 3
     auth:
       auth_url: http://{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}:5000/v3
       username: admin
