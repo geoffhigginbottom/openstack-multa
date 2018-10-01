@@ -1,0 +1,14 @@
+python-openstackclient
+python-ironicclient
+python-keystoneclient
+python-neutronclient
+python-novaclient
+Simplejson
+os-client-config==1.30.0
+osc-lib
+oslo.config
+oslo.i18n
+oslo.serialization
+oslo.utils
+ansible
+shade==1.28

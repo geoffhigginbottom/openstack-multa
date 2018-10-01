@@ -2,9 +2,10 @@
 
 osa_repo: 'https://github.com/openstack/openstack-ansible.git'
 # osa_version: stable/queens
-osa_version: stable/pike
+# osa_version: stable/pike
+osa_version: 17.1.0
 osa_destination: /opt/openstack-ansible
-git_force: yes
+git_force: no
 
 service_net_address: 10.208.0.0
 
