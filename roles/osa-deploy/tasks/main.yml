@@ -332,63 +332,63 @@
   tags: 
     - os-nova-install
 
-- name: Sending a status update e-mail
-  mail:
-    host: '{{ host }}'
-    port: '{{ port }}'
-    secure:  '{{ secure }}'
-    username: '{{ username }}'
-    password: '{{ password }}'
-    from: '{{ from }}'
-    to: '{{ to }}'
-    subject: '{{ subject_prefix }} Running setup-infrastructure'
-    body: setup-infrastructure.yml has commenced
-  when: send_mail | bool
-  tags:
-    - mail
-- name: Run setup-infrastructure.yml
-  shell: openstack-ansible setup-infrastructure.yml
-  args:
-    chdir: /opt/openstack-ansible/playbooks
-    #creates: /var/log/lxc
-  tags: 
-    - setup_infrastructure
+# - name: Sending a status update e-mail
+#   mail:
+#     host: '{{ host }}'
+#     port: '{{ port }}'
+#     secure:  '{{ secure }}'
+#     username: '{{ username }}'
+#     password: '{{ password }}'
+#     from: '{{ from }}'
+#     to: '{{ to }}'
+#     subject: '{{ subject_prefix }} Running setup-infrastructure'
+#     body: setup-infrastructure.yml has commenced
+#   when: send_mail | bool
+#   tags:
+#     - mail
+# - name: Run setup-infrastructure.yml
+#   shell: openstack-ansible setup-infrastructure.yml
+#   args:
+#     chdir: /opt/openstack-ansible/playbooks
+#     #creates: /var/log/lxc
+#   tags: 
+#     - setup_infrastructure
 
-- name: Sending a status update e-mail
-  mail:
-    host: '{{ host }}'
-    port: '{{ port }}'
-    secure:  '{{ secure }}'
-    username: '{{ username }}'
-    password: '{{ password }}'
-    from: '{{ from }}'
-    to: '{{ to }}'
-    subject: '{{ subject_prefix }} Running setup-penstack'
-    body: setup-openstack.yml has commenced
-  when: send_mail | bool
-  tags:
-    - mail
+# - name: Sending a status update e-mail
+#   mail:
+#     host: '{{ host }}'
+#     port: '{{ port }}'
+#     secure:  '{{ secure }}'
+#     username: '{{ username }}'
+#     password: '{{ password }}'
+#     from: '{{ from }}'
+#     to: '{{ to }}'
+#     subject: '{{ subject_prefix }} Running setup-penstack'
+#     body: setup-openstack.yml has commenced
+#   when: send_mail | bool
+#   tags:
+#     - mail
 
-- name: Run setup-openstack.yml
-  shell: openstack-ansible setup-openstack.yml
-  args:
-    chdir: /opt/openstack-ansible/playbooks
-    #creates: /var/log/lxc
-  tags: 
-    - setup_openstack
+# - name: Run setup-openstack.yml
+#   shell: openstack-ansible setup-openstack.yml
+#   args:
+#     chdir: /opt/openstack-ansible/playbooks
+#     #creates: /var/log/lxc
+#   tags: 
+#     - setup_openstack
 
-- name: Sending a status update e-mail
-  mail:
-    host: '{{ host }}'
-    port: '{{ port }}'
-    secure:  '{{ secure }}'
-    username: '{{ username }}'
-    password: '{{ password }}'
-    from: '{{ from }}'
-    to: '{{ to }}'
-    subject: '{{ subject_prefix }} OpenStack has been Installed'
-    body: Openstack has been installed and is now accessible (console VM is still being deployed)
-  when: send_mail | bool
-  tags:
-    - mail
+# - name: Sending a status update e-mail
+#   mail:
+#     host: '{{ host }}'
+#     port: '{{ port }}'
+#     secure:  '{{ secure }}'
+#     username: '{{ username }}'
+#     password: '{{ password }}'
+#     from: '{{ from }}'
+#     to: '{{ to }}'
+#     subject: '{{ subject_prefix }} OpenStack has been Installed'
+#     body: Openstack has been installed and is now accessible (console VM is still being deployed)
+#   when: send_mail | bool
+#   tags:
+#     - mail
   
