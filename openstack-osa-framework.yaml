@@ -21,11 +21,11 @@ parameters:
     description: Type of instance (flavor) to be used for Compute Nodes
     default: 60 GB I/O v1
 
-  cinder_flavor:
+  ceph_flavor:
     type: string
-    label: Cinder Flavor
-    description: Type of instance (flavor) to be used for Cinder Nodes
-    default: 8GB Standard Instance
+    label: Ceph Flavor
+    description: Type of instance (flavor) to be used for Ceph Nodes
+    default: 60 GB I/O v1
 
   swift_flavor:
     type: string
@@ -70,7 +70,7 @@ parameter_groups:
   - image
   - controller_flavor
   - compute_flavor
-  - cinder_flavor
+  - ceph_flavor
   - swift_flavor
   - lb_flavor
   - console_flavor
@@ -87,42 +87,147 @@ resources:
     properties:
       name: "controller1-volume1"
       size: 160
+      volume_type: SSD
 
   controller2_volume1:
     type: OS::Cinder::Volume
     properties:
       name: "controller2-volume1"
       size: 160
+      volume_type: SSD
 
   controller3_volume1:
     type: OS::Cinder::Volume
     properties:
       name: "controller3-volume1"
       size: 160
+      volume_type: SSD
 
   compute1_volume1:
     type: OS::Cinder::Volume
     properties:
       name: "compute1-volume1"
       size: 500
+      volume_type: SSD
 
   compute2_volume1:
     type: OS::Cinder::Volume
     properties:
       name: "compute2-volume1"
       size: 500
+      volume_type: SSD
 
   compute3_volume1:
     type: OS::Cinder::Volume
     properties:
       name: "compute3-volume1"
       size: 500
+      volume_type: SSD
 
-  cinder1_volume1:
+  ceph1_volume1:
     type: OS::Cinder::Volume
     properties:
-      name: "cinder1-volume1"
-      size: 500
+      name: "ceph1-volume1"
+      size: 100
+      volume_type: SSD
+
+  ceph1_volume2:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph1-volume2"
+      size: 100
+      volume_type: SSD
+  
+  ceph1_volume3:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph1-volume3"
+      size: 100
+      volume_type: SSD
+  
+  ceph1_volume4:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph1-volume4"
+      size: 100
+      volume_type: SSD
+
+  ceph1_volume5:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph1-volume5"
+      size: 100
+      volume_type: SSD
+
+  ceph2_volume1:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph2-volume1"
+      size: 100
+      volume_type: SSD
+
+  ceph2_volume2:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph2-volume2"
+      size: 100
+      volume_type: SSD
+  
+  ceph2_volume3:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph2-volume3"
+      size: 100
+      volume_type: SSD
+  
+  ceph2_volume4:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph2-volume4"
+      size: 100
+      volume_type: SSD
+
+  ceph2_volume5:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph2-volume5"
+      size: 100
+      volume_type: SSD
+
+  ceph3_volume1:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph3-volume1"
+      size: 100
+      volume_type: SSD
+
+  ceph3_volume2:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph3-volume2"
+      size: 100
+      volume_type: SSD
+  
+  ceph3_volume3:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph3-volume3"
+      size: 100
+      volume_type: SSD
+  
+  ceph3_volume4:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph3-volume4"
+      size: 100
+      volume_type: SSD
+
+  ceph3_volume5:
+    type: OS::Cinder::Volume
+    properties:
+      name: "ceph3-volume5"
+      size: 100
+      volume_type: SSD
 
   swift1_volume1:
     type: OS::Cinder::Volume
@@ -420,32 +525,164 @@ resources:
       volume_id: { get_resource: compute3_volume1 }
     depends_on: compute3
 
-## Cinder Nodes ##
 
-  cinder1:
+## ceph Nodes ##
+
+  ceph1:
     type: "OS::Nova::Server"
     properties:
       image: { get_param: image }
-      flavor: { get_param: cinder_flavor }
+      flavor: { get_param: ceph_flavor }
       key_name: { get_param: key_name }
-      name: "cinder1"
+      name: "ceph1"
       networks:
         - uuid: 00000000-0000-0000-0000-000000000000
         - uuid: 11111111-1111-1111-1111-111111111111
         - uuid: { get_resource: encapsulation_network }
         - uuid: { get_resource: mgmt_network }
         - uuid: { get_resource: storage_network }
+        - uuid: { get_resource: storage_replication_network }
       config_drive: True
       user_data_format: RAW
-    depends_on: cinder1_volume1
 
-  cinder1_volume1_attach:
+  ceph1_volume1_attach:
     type: OS::Cinder::VolumeAttachment
     properties:
-      instance_uuid: { get_resource: cinder1 }
-      mountpoint: /dev/xvdo
-      volume_id: { get_resource: cinder1_volume1 }
-    depends_on: cinder1
+      instance_uuid: { get_resource: ceph1 }
+      mountpoint: /dev/xvdi
+      volume_id: { get_resource: ceph1_volume1 }
+
+  ceph1_volume2_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph1 }
+      mountpoint: /dev/xvdj
+      volume_id: { get_resource: ceph1_volume2 }
+
+  ceph1_volume3_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph1 }
+      mountpoint: /dev/xvdk
+      volume_id: { get_resource: ceph1_volume3 }
+
+  ceph1_volume4_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph1 }
+      mountpoint: /dev/xvdl
+      volume_id: { get_resource: ceph1_volume4 }
+
+  ceph1_volume5_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph1 }
+      mountpoint: /dev/xvdm
+      volume_id: { get_resource: ceph1_volume5 }
+
+  ceph2:
+    type: "OS::Nova::Server"
+    properties:
+      image: { get_param: image }
+      flavor: { get_param: ceph_flavor }
+      key_name: { get_param: key_name }
+      name: "ceph2"
+      networks:
+        - uuid: 00000000-0000-0000-0000-000000000000
+        - uuid: 11111111-1111-1111-1111-111111111111
+        - uuid: { get_resource: encapsulation_network }
+        - uuid: { get_resource: mgmt_network }
+        - uuid: { get_resource: storage_network }
+        - uuid: { get_resource: storage_replication_network }
+      config_drive: True
+      user_data_format: RAW
+
+  ceph2_volume1_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph2 }
+      mountpoint: /dev/xvdi
+      volume_id: { get_resource: ceph2_volume1 }
+
+  ceph2_volume2_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph2 }
+      mountpoint: /dev/xvdj
+      volume_id: { get_resource: ceph2_volume2 }
+
+  ceph2_volume3_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph2 }
+      mountpoint: /dev/xvdk
+      volume_id: { get_resource: ceph2_volume3 }
+
+  ceph2_volume4_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph2 }
+      mountpoint: /dev/xvdl
+      volume_id: { get_resource: ceph2_volume4 }
+
+  ceph2_volume5_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph2 }
+      mountpoint: /dev/xvdm
+      volume_id: { get_resource: ceph2_volume5 }
+
+  ceph3:
+    type: "OS::Nova::Server"
+    properties:
+      image: { get_param: image }
+      flavor: { get_param: ceph_flavor }
+      key_name: { get_param: key_name }
+      name: "ceph3"
+      networks:
+        - uuid: 00000000-0000-0000-0000-000000000000
+        - uuid: 11111111-1111-1111-1111-111111111111
+        - uuid: { get_resource: encapsulation_network }
+        - uuid: { get_resource: mgmt_network }
+        - uuid: { get_resource: storage_network }
+        - uuid: { get_resource: storage_replication_network }
+      config_drive: True
+      user_data_format: RAW
+
+  ceph3_volume1_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph3 }
+      mountpoint: /dev/xvdi
+      volume_id: { get_resource: ceph3_volume1 }
+
+  ceph3_volume2_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph3 }
+      mountpoint: /dev/xvdj
+      volume_id: { get_resource: ceph3_volume2 }
+
+  ceph3_volume3_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph3 }
+      mountpoint: /dev/xvdk
+      volume_id: { get_resource: ceph3_volume3 }
+
+  ceph3_volume4_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph3 }
+      mountpoint: /dev/xvdl
+      volume_id: { get_resource: ceph3_volume4 }
+
+  ceph3_volume5_attach:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: ceph3 }
+      mountpoint: /dev/xvdm
+      volume_id: { get_resource: ceph3_volume5 }
 
 ## Swift Nodes ##
 
