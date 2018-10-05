@@ -1,8 +1,8 @@
 ---
 
 osa_repo: 'https://github.com/openstack/openstack-ansible.git'
-# osa_version: stable/queens
-osa_version: stable/pike
+osa_version: stable/queens
+# osa_version: stable/pike
 # osa_version: 16.0.17
 osa_destination: /opt/openstack-ansible
 git_force: yes

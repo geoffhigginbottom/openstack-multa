@@ -37,36 +37,6 @@
   tags:
     - console-user
 
-- name: Add PPA Repo
-  apt_repository: 
-    repo: 'ppa:ansible/ansible'
-  tags: 
-    - packages
-
-- name: Update apt sources
-  apt:
-    update_cache: yes
-  register: apt_update
-  until: apt_update|success
-  retries: 5
-  delay: 2
-  tags: 
-    - packages
-
-- name: Install Packages
-  package: name={{ item }} state=present
-  with_items:
-   - ansible
-   - python-openstackclient
-   - python-shade
-  when: ansible_os_family == "Debian"
-  tags: 
-    - packages
-
-
-
-
-
 - name: Install Pip
   apt: name={{ item }} state=present
   with_items:
@@ -77,58 +47,29 @@
     - pip
     - ubuntu
 
-- name: Upgrade OpenStack-Client
-  command: pip install --upgrade python-openstackclient
+- name: Upgrade PIP
+  command: pip install --upgrade pip
   tags:
     - pip
 
-- name: Upgrade heat-client
-  command: pip install --upgrade python-heatclient
+- name: Upgrade PIP3
+  command: pip3 install --upgrade pip
   tags:
     - pip
 
-- name: Upgrade ironic-client
-  command: pip install --upgrade python-ironicclient
+- name: Create requirements.txt
+  template:
+    src: files/requirements.txt
+    dest: /requirements.txt
   tags:
     - pip
 
-# - name: Upgrade PIP
-#   command: pip install --upgrade pip
-#   tags:
-#     - pip
-
-# - name: Install Shade
-#   pip:
-#     name: shade
-#     state: forcereinstall
-#   tags:
-#     - pip
-#     - ubuntu
-#     - shade
-
-# - name: Install OpenStack-Client
-#   pip:
-#     name: python-openstackclient
-#   tags:
-#     - pip
-#     - ubuntu
-#     - python-openstackclient
-
-# - name: Install OpenStack-SDK
-#   pip:
-#     name: openstacksdk
-#   tags:
-#     - pip
-#     - ubuntu
-#     - openstacksdk
-
-# - name: Install ansible
-#   pip:
-#     name: ansible
-#   tags:
-#     - pip
-#     - ubuntu
-#     - ansible
+- name: Install specified python requirements.
+  pip:
+    requirements: /requirements.txt
+    extra_args: --ignore-installed
+  tags:
+    - pip
 
 - name: Upgrade CentOS
   yum:

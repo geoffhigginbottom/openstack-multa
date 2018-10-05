@@ -10,5 +10,5 @@
 - import_playbook: swift-disks.yml
 - import_playbook: osa-prep.yml
 - import_playbook: osa-git.yml
-- import_playbook: osa-deploy.yml
-- import_playbook: console-vm.yml
+# - import_playbook: osa-deploy.yml
+# - import_playbook: console-vm.yml
