@@ -12,7 +12,7 @@ used_ips:
   - "172.29.248.1,172.29.248.50"
 
 global_overrides:
-  internal_lb_vip_address: "{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  internal_lb_vip_address: "{{ lb1_mgmt_ip }}"
   external_lb_vip_address: "{{ hostvars['lb1']['ansible_eth0']['ipv4']['address'] }}"
   tunnel_bridge: "br-vxlan"
   management_bridge: "br-mgmt"
@@ -81,11 +81,11 @@ global_overrides:
 # three minimum target hosts for these services.
 shared-infra_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
 
 # Level: repo-infra_hosts (required)
 # apt cache, python packages, etc
@@ -94,11 +94,11 @@ shared-infra_hosts:
 # target hosts as the 'shared-infra_hosts' level.
 repo-infra_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
 
 # Level: os-infra_hosts (required)
 # List of target hosts on which to deploy the glance API, nova API, heat API,
@@ -106,11 +106,11 @@ repo-infra_hosts:
 # Typically contains the same target hosts as 'shared-infra_hosts' level.
 os-infra_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
 
 # Level: identity_hosts (required)
 # List of target hosts on which to deploy the keystone service. Recommend
@@ -118,11 +118,11 @@ os-infra_hosts:
 # target hosts as the 'shared-infra_hosts' level.
 identity_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
 
 # Level: network_hosts (required)
 # List of target hosts on which to deploy neutron services. Recommend three
@@ -130,11 +130,11 @@ identity_hosts:
 # hosts as the 'shared-infra_hosts' level.
 network_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
 
 # Level: compute_hosts (optional)
 # List of target hosts on which to deploy the nova compute service. Recommend
@@ -142,11 +142,11 @@ network_hosts:
 # that do not reside in other levels.
 compute_hosts:
   compute1:
-    ip: "{{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ compute1_mgmt_ip }}"
   compute2:
-    ip: "{{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ compute2_mgmt_ip }}"
   compute3:
-    ip: "{{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ compute3_mgmt_ip }}"
 
 # Level: ironic-compute_hosts (optional)
 # List of target hosts on which to deploy the nova compute service for Ironic.
@@ -161,11 +161,11 @@ compute_hosts:
 # hosts as the 'shared-infra_hosts' level.
 storage-infra_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
 
 # Level: storage_hosts (required)
 # List of target hosts on which to deploy the cinder volume service. Recommend
@@ -174,7 +174,7 @@ storage-infra_hosts:
 
 storage_hosts:  
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
     container_vars:
       cinder_backends:
         limit_container_types: cinder_volume
@@ -192,7 +192,7 @@ storage_hosts:
           rbd_secret_uuid: "{{ '{{' }} cinder_ceph_client_uuid {{ '}}' }}"
 
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
     container_vars:
       cinder_backends:
         limit_container_types: cinder_volume
@@ -210,7 +210,7 @@ storage_hosts:
           rbd_secret_uuid: "{{ '{{' }} cinder_ceph_client_uuid {{ '}}' }}"
 
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
     container_vars:
       cinder_backends:
         limit_container_types: cinder_volume
@@ -229,7 +229,7 @@ storage_hosts:
 
 ceph-osd_hosts:
   ceph1:
-    ip: "{{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ ceph1_mgmt_ip }}"
     affinity:
       ceph_osd_container: 3
     container_vars:
@@ -243,7 +243,7 @@ ceph-osd_hosts:
         - /dev/xvdm
 
   ceph2:
-    ip: "{{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ ceph2_mgmt_ip }}"
     affinity:
       ceph_osd_container: 3
     container_vars:
@@ -257,7 +257,7 @@ ceph-osd_hosts:
         - /dev/xvdm
 
   ceph3:
-    ip: "{{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ ceph3_mgmt_ip }}"
     affinity:
       ceph_osd_container: 3
     container_vars:
@@ -273,33 +273,33 @@ ceph-osd_hosts:
 # ceph-mon containers
 ceph-mon_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
     affinity:
       ceph_mon_container: 3
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
     affinity:
       ceph_mon_container: 3
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
     affinity:
       ceph_mon_container: 3
 
 # cinder volume hosts (Ceph RBD-backed)
 storage_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
 
 # Level: log_hosts (required)
 # List of target hosts on which to deploy logging services. Recommend
 # one minimum target host for this service.
 log_hosts:
   controller2:
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller2_mgmt_ip }}"
 
 # Level: haproxy_hosts (optional)
 # List of target hosts on which to deploy HAProxy. Recommend at least one
@@ -307,4 +307,4 @@ log_hosts:
 # used.
 haproxy_hosts:
   lb1:
-    ip: "{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ lb1_mgmt_ip }}"

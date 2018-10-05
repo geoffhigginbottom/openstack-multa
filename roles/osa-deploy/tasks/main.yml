@@ -79,22 +79,6 @@
   tags: 
     - rsync
 
-- name: Clear Facts
-  meta: clear_facts
-  tags:
-    - facts
-    - user_config
-    - user_variables
-
-# - name: Delete Facts Files # force a full facts refresh
-#   become: no
-#   delegate_to: localhost
-#   shell: rm /tmp/facts_cache/*
-#   tags:
-#     - facts
-#     - user_config
-#     - user_variables
-
 - name: Gather facts
   become: no
   delegate_to: localhost
@@ -104,131 +88,243 @@
     - user_config
     - user_variables
 
-# - name: Debug ceph1 br_mgmt
-#   debug:
-#     msg: "ceph1 br_mgmt - {{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
 
-# - name: Debug ceph2 br_mgmt
-#   debug:
-#     msg: "ceph2 br_mgmt - {{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set ceph1_mgmt_ip fact (br_mgmt)
+  set_fact:
+    ceph1_mgmt_ip: "{{ hostvars['ceph1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
 
-# - name: Debug ceph3 br_mgmt
-#   debug:
-#     msg: "ceph3 br_mgmt - {{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set ceph1_mgmt_ip fact (eth3)
+  set_fact:
+    ceph1_mgmt_ip: "{{ hostvars['ceph1']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
 
 
-# - name: Debug compute1 br_mgmt
-#   debug:
-#     msg: "compute1 br_mgmt - {{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set ceph2_mgmt_ip fact (br_mgmt)
+  set_fact:
+    ceph2_mgmt_ip: "{{ hostvars['ceph2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
 
-# - name: Debug compute2 br_mgmt
-#   debug:
-#     msg: "compute2 br_mgmt - {{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
-
-# - name: Debug compute3 br_mgmt
-#   debug:
-#     msg: "compute3 br_mgmt - {{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set ceph2_mgmt_ip fact (eth3)
+  set_fact:
+    ceph2_mgmt_ip: "{{ hostvars['ceph2']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
 
 
-# - name: Debug console br_mgmt
-#   debug:
-#     msg: "console br_mgmt - {{ hostvars['console']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set ceph3_mgmt_ip fact (br_mgmt)
+  set_fact:
+    ceph3_mgmt_ip: "{{ hostvars['ceph3']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set ceph3_mgmt_ip fact (eth3)
+  set_fact:
+    ceph3_mgmt_ip: "{{ hostvars['ceph3']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
 
 
-# - name: Debug controller1 br_mgmt
-#   debug:
-#     msg: "controller1 br_mgmt - {{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set compute1_mgmt_ip fact (br_mgmt)
+  set_fact:
+    compute1_mgmt_ip: "{{ hostvars['compute1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
 
-# - name: Debug controller2 br_mgmt
-#   debug:
-#     msg: "controller2 br_mgmt - {{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
-
-# - name: Debug controller3 br_mgmt
-#   debug:
-#     msg: "controller3 br_mgmt - {{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set compute1_mgmt_ip fact (eth3)
+  set_fact:
+    compute1_mgmt_ip: "{{ hostvars['compute1']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
 
 
-# - name: Debug gw br_mgmt
-#   debug:
-#     msg: "gw br_mgmt - {{ hostvars['gw']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set compute2_mgmt_ip fact (br_mgmt)
+  set_fact:
+    compute2_mgmt_ip: "{{ hostvars['compute2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
 
-# - name: Debug lb1 br_mgmt
-#   debug:
-#     msg: "lb1 br_mgmt - {{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set compute2_mgmt_ip fact (eth3)
+  set_fact:
+    compute2_mgmt_ip: "{{ hostvars['compute2']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
 
 
-# - name: Debug swift1 br_mgmt
-#   debug:
-#     msg: "swift1 br_mgmt - {{ hostvars['swift1']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set compute3_mgmt_ip fact (br_mgmt)
+  set_fact:
+    compute3_mgmt_ip: "{{ hostvars['compute3']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
 
-# - name: Debug swift2 br_mgmt
-#   debug:
-#     msg: "swift2 br_mgmt - {{ hostvars['swift2']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
+- name: Set compute3_mgmt_ip fact (eth3)
+  set_fact:
+    compute3_mgmt_ip: "{{ hostvars['compute3']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
 
-# - name: Debug swift3 br_mgmt
-#   debug:
-#     msg: "swift3 br_mgmt - {{ hostvars['swift3']['ansible_br_mgmt']['ipv4']['address'] }}"
-#     verbosity: 2
-#   ignore_errors: true
-#   tags:
-#     - user_config
 
+- name: Set controller1_mgmt_ip fact (br_mgmt)
+  set_fact:
+    controller1_mgmt_ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set controller1_mgmt_ip fact (eth3)
+  set_fact:
+    controller1_mgmt_ip: "{{ hostvars['controller1']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Set controller2_mgmt_ip fact (br_mgmt)
+  set_fact:
+    controller2_mgmt_ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set controller2_mgmt_ip fact (eth3)
+  set_fact:
+    controller2_mgmt_ip: "{{ hostvars['controller2']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Set controller3_mgmt_ip fact (br_mgmt)
+  set_fact:
+    controller3_mgmt_ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set controller3_mgmt_ip fact (eth3)
+  set_fact:
+    controller3_mgmt_ip: "{{ hostvars['controller3']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Set gw_mgmt_ip fact (br_mgmt)
+  set_fact:
+    gw_mgmt_ip: "{{ hostvars['gw']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set gw_mgmt_ip fact (eth3)
+  set_fact:
+    gw_mgmt_ip: "{{ hostvars['gw']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Set lb1_mgmt_ip fact (br_mgmt)
+  set_fact:
+    lb1_mgmt_ip: "{{ hostvars['lb1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set lb1_mgmt_ip fact (eth3)
+  set_fact:
+    lb1_mgmt_ip: "{{ hostvars['lb1']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Set swift1_mgmt_ip fact (br_mgmt)
+  set_fact:
+    swift1_mgmt_ip: "{{ hostvars['swift1']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set swift1_mgmt_ip fact (eth3)
+  set_fact:
+    swift1_mgmt_ip: "{{ hostvars['swift1']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Set swift2_mgmt_ip fact (br_mgmt)
+  set_fact:
+    swift2_mgmt_ip: "{{ hostvars['swift2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set swift2_mgmt_ip fact (eth3)
+  set_fact:
+    swift2_mgmt_ip: "{{ hostvars['swift2']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+
+- name: Set swift3_mgmt_ip fact (br_mgmt)
+  set_fact:
+    swift3_mgmt_ip: "{{ hostvars['swift3']['ansible_br_mgmt']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is defined
+  ignore_errors: true
+  tags:
+    - user_config
+
+- name: Set swift3_mgmt_ip fact (eth3)
+  set_fact:
+    swift3_mgmt_ip: "{{ hostvars['swift3']['ansible_eth3']['ipv4']['address'] }}"
+  when: ansible_br_mgmt is not defined
+  ignore_errors: true
+  tags:
+    - user_config
 
 - name: Create openstack_user_config.yml from template
   template:
@@ -332,63 +428,63 @@
   tags: 
     - os-nova-install
 
-# - name: Sending a status update e-mail
-#   mail:
-#     host: '{{ host }}'
-#     port: '{{ port }}'
-#     secure:  '{{ secure }}'
-#     username: '{{ username }}'
-#     password: '{{ password }}'
-#     from: '{{ from }}'
-#     to: '{{ to }}'
-#     subject: '{{ subject_prefix }} Running setup-infrastructure'
-#     body: setup-infrastructure.yml has commenced
-#   when: send_mail | bool
-#   tags:
-#     - mail
-# - name: Run setup-infrastructure.yml
-#   shell: openstack-ansible setup-infrastructure.yml
-#   args:
-#     chdir: /opt/openstack-ansible/playbooks
-#     #creates: /var/log/lxc
-#   tags: 
-#     - setup_infrastructure
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: '{{ subject_prefix }} Running setup-infrastructure'
+    body: setup-infrastructure.yml has commenced
+  when: send_mail | bool
+  tags:
+    - mail
+- name: Run setup-infrastructure.yml
+  shell: openstack-ansible setup-infrastructure.yml
+  args:
+    chdir: /opt/openstack-ansible/playbooks
+    #creates: /var/log/lxc
+  tags: 
+    - setup_infrastructure
 
-# - name: Sending a status update e-mail
-#   mail:
-#     host: '{{ host }}'
-#     port: '{{ port }}'
-#     secure:  '{{ secure }}'
-#     username: '{{ username }}'
-#     password: '{{ password }}'
-#     from: '{{ from }}'
-#     to: '{{ to }}'
-#     subject: '{{ subject_prefix }} Running setup-penstack'
-#     body: setup-openstack.yml has commenced
-#   when: send_mail | bool
-#   tags:
-#     - mail
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: '{{ subject_prefix }} Running setup-penstack'
+    body: setup-openstack.yml has commenced
+  when: send_mail | bool
+  tags:
+    - mail
 
-# - name: Run setup-openstack.yml
-#   shell: openstack-ansible setup-openstack.yml
-#   args:
-#     chdir: /opt/openstack-ansible/playbooks
-#     #creates: /var/log/lxc
-#   tags: 
-#     - setup_openstack
+- name: Run setup-openstack.yml
+  shell: openstack-ansible setup-openstack.yml
+  args:
+    chdir: /opt/openstack-ansible/playbooks
+    #creates: /var/log/lxc
+  tags: 
+    - setup_openstack
 
-# - name: Sending a status update e-mail
-#   mail:
-#     host: '{{ host }}'
-#     port: '{{ port }}'
-#     secure:  '{{ secure }}'
-#     username: '{{ username }}'
-#     password: '{{ password }}'
-#     from: '{{ from }}'
-#     to: '{{ to }}'
-#     subject: '{{ subject_prefix }} OpenStack has been Installed'
-#     body: Openstack has been installed and is now accessible (console VM is still being deployed)
-#   when: send_mail | bool
-#   tags:
-#     - mail
+- name: Sending a status update e-mail
+  mail:
+    host: '{{ host }}'
+    port: '{{ port }}'
+    secure:  '{{ secure }}'
+    username: '{{ username }}'
+    password: '{{ password }}'
+    from: '{{ from }}'
+    to: '{{ to }}'
+    subject: '{{ subject_prefix }} OpenStack has been Installed'
+    body: Openstack has been installed and is now accessible (console VM is still being deployed)
+  when: send_mail | bool
+  tags:
+    - mail
   

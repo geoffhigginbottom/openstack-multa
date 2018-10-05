@@ -14,8 +14,6 @@ global_overrides:
     region: 1
     zone: 0
     weight: 100
-    #statsd_host: statsd.example.lan
-    #statsd_port: 8125
     mount_point: /srv/node
 
 #   Level: drives (required)    
@@ -53,50 +51,37 @@ global_overrides:
 # Level: swift-proxy_hosts (required)
 swift-proxy_hosts:
   controller1:
-    ip: "{{ hostvars['controller1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller1_mgmt_ip }}"
     container_vars:
       swift_proxy_vars:
-        # read_affinity: "r1=100"
-        # write_affinity: "r1"
-        # write_affinity_node_count: "2 * replicas"
-  controller2:
 
-    ip: "{{ hostvars['controller2']['ansible_br_mgmt']['ipv4']['address'] }}"
+  controller2:
+    ip: "{{ controller2_mgmt_ip }}"
     container_vars:
       swift_proxy_vars:
-        # read_affinity: "r1=100"
-        # write_affinity: "r1"
-        # write_affinity_node_count: "2 * replicas"
+
   controller3:
-    ip: "{{ hostvars['controller3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ controller3_mgmt_ip }}"
     container_vars:
       swift_proxy_vars:
-        # read_affinity: "r1=100"
-        # write_affinity: "r1"
-        # write_affinity_node_count: "2 * replicas"
+
 
 # Level: swift_hosts (required)
 swift_hosts:
   swift1:
-    ip: "{{ hostvars['swift1']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ swift1_mgmt_ip }}"
     container_vars:
       swift_vars:
-        # storage_ip: "{{ hostvars['swift1']['ansible_br_storage']['ipv4']['address'] }}"
-        # repl_ip: "{{ hostvars['swift1']['ansible_br_repl']['ipv4']['address'] }}"
         zone: 0
 
   swift2:
-    ip: "{{ hostvars['swift2']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ swift2_mgmt_ip }}"
     container_vars:
       swift_vars:
-        # storage_ip: "{{ hostvars['swift2']['ansible_br_storage']['ipv4']['address'] }}"
-        # repl_ip: "{{ hostvars['swift2']['ansible_br_repl']['ipv4']['address'] }}"
         zone: 1
   
   swift3:
-    ip: "{{ hostvars['swift3']['ansible_br_mgmt']['ipv4']['address'] }}"
+    ip: "{{ swift3_mgmt_ip }}"
     container_vars:
       swift_vars:
-        # storage_ip: "{{ hostvars['swift3']['ansible_br_storage']['ipv4']['address'] }}"
-        # repl_ip: "{{ hostvars['swift3']['ansible_br_repl']['ipv4']['address'] }}"
         zone: 2
