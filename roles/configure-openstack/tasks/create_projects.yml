@@ -5,6 +5,7 @@
     cloud: '{{ my_cloud_name }}'
     endpoint_type: admin
     state: present
+    domain: default
     name: '{{ item.name }}'
     description: '{{ item.description }}'
     enabled: True
