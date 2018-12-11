@@ -36,13 +36,14 @@
     host: '{{ host }}'
     port: '{{ port }}'
     secure:  '{{ secure }}'
+    charset: utf-8
     username: '{{ username }}'
     password: '{{ password }}'
     from: '{{ from }}'
     to: '{{ to }}'
     subject: '{{ subject_prefix }} Bootstrap Complete'
     body: Ansible Bootstrap has been completed
-  when: send_mail | bool
+  when: send_mail
   tags:
     - mail
 
@@ -442,11 +443,25 @@
   when: send_mail | bool
   tags:
     - mail
-- name: Run setup-infrastructure.yml
+    
+- name: Check setup-infrastructure Status
+  stat:
+    path: /run/haproxy
+  register: setup_infrastructure
+  tags: 
+    - setup_infrastructure
+
+- debug:
+    var: setup_infrastructure
+    verbosity: 2
+  tags: 
+    - setup_infrastructure
+
+- name: setup-infrastructure
   shell: openstack-ansible setup-infrastructure.yml
   args:
     chdir: /opt/openstack-ansible/playbooks
-    #creates: /var/log/lxc
+  when: setup_infrastructure.stat.exists == false
   tags: 
     - setup_infrastructure
 
@@ -465,11 +480,24 @@
   tags:
     - mail
 
-- name: Run setup-openstack.yml
+- name: Check setup-openstack Status
+  stat:
+    path: /openstack/venvs
+  register: setup_openstack
+  tags: 
+    - setup_openstack
+
+- debug:
+    var: setup_openstack
+    verbosity: 2
+  tags: 
+    - setup_openstack
+
+- name: setup-openstack
   shell: openstack-ansible setup-openstack.yml
   args:
     chdir: /opt/openstack-ansible/playbooks
-    #creates: /var/log/lxc
+  when: setup_openstack.stat.exists == false
   tags: 
     - setup_openstack
 
