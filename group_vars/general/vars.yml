@@ -41,7 +41,7 @@ project_4_desc: Ansible Demo Project
 # bind_forwarder2: 69.20.0.196
 # bind_forwarder3: 8.8.8.8
 # bind_forwarder4: 8.8.4.4
-dns_servers: 69.20.0.164 69.20.0.196 #Only requried when Bind is not deployed - comment out this line if Bind is being deployed, and comment out the Bind lines above etc
+dns_servers: 69.20.0.164 69.20.0.196 #Only requried when Bind is not deployed - comment out this line if Bind is being deployed, and activate the Bind lines above etc
 
 
 # VPN Settings
