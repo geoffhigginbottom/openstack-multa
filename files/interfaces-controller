@@ -16,11 +16,12 @@ iface eth0 inet static
     address {{ ansible_eth0.ipv4.address }}
     netmask {{ ansible_eth0.ipv4.netmask }}
     gateway {{ ansible_default_ipv4.gateway }}
+    dns-nameservers {{ dns_servers }}
 iface eth0 inet6 static
     address {{ ansible_default_ipv6.address }}
     netmask {{ ansible_default_ipv6.prefix }}
     gateway {{ ansible_default_ipv6.gateway }}
-    dns-nameservers {{ dns_servers }}
+
 
 # Label private
 auto eth1
