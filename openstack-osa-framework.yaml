@@ -19,13 +19,13 @@ parameters:
     type: string
     label: Compute Flavor
     description: Type of instance (flavor) to be used for Compute Nodes
-    default: 60 GB I/O v1
+    default: 30 GB I/O v1
 
   ceph_flavor:
     type: string
     label: Ceph Flavor
     description: Type of instance (flavor) to be used for Ceph Nodes
-    default: 60 GB I/O v1
+    default: 30 GB I/O v1
 
   swift_flavor:
     type: string
