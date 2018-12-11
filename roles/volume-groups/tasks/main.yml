@@ -27,14 +27,6 @@
   when: inventory_hostname is search("compute")
   tags:
     - compute
-
-# - name: Create Cinder Volume Group Storage Nodes
-#   lvg:
-#     vg: cinder-volumes
-#     pvs: "{{ storage_cinder_vg }}"
-#   when: inventory_hostname is search("cinder")
-#   tags:
-#     - cinder
     
 - name: Sending a status update e-mail
   mail:
