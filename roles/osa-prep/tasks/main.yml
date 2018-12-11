@@ -235,42 +235,6 @@
 ##### There must be a better way of doing this, but for now this appears to work
 #############################################################################################
 
-# - name: Remove GW Cache file # required to clear GW Facts as next step was not refreshing them
-#   become: no
-#   delegate_to: 127.0.0.1
-#   run_once: true
-#   shell: rm -f -r /tmp/facts_cache/gw
-#   tags:
-#     - networking
-#     - ubuntu
-#     - vpn
-#     - facts
-#     - routes
-
-
-# - name: Gather updated network facts from GW
-#   setup:
-#   delegate_to: 127.0.0.1
-#   become: no
-#   # delegate_to: "{{item}}"
-#   # run_once: true
-#   with_items: gw
-#   # when: hostvars[item]['ansible_br_flat_ipv4'] is not defined
-#   tags: 
-#     - networking
-#     - ubuntu
-#     - vpn
-#     - facts
-#     - routes
-
-# - name: Clear Facts # just clearing the GW facts file (above) was not sufficient
-#   meta: clear_facts
-#   tags:
-#     - networking
-#     - ubuntu
-#     - vpn
-#     - facts
-
 - name: Refresh Facts
   become: no
   delegate_to: 127.0.0.1
@@ -336,6 +300,7 @@
     vpn_gw_eth5: "{{hostvars['gw']['ansible_eth5']['ipv4']['address']}}"
   ignore_errors: yes
   run_once: true
+  # when: hostvars['controller1']['ansible_eth5'] is defined
   tags:
     - networking
     - ubuntu
