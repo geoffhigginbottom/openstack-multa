@@ -21,13 +21,19 @@
 ## Debug and Verbose options.
 debug: false
 
+## Installation method for OpenStack services
+# Default option (source) is to install the OpenStack services using PIP
+# packages. An alternative method (distro) is to use the distribution cloud
+# repositories to install OpenStack using distribution packages
+install_method: source
+
 ## Misc
 lxc_net_mtu: 1450
 bootstrap_host_aio_config: no
 
 lxc_cache_prep_timeout: 3600
-lxc_cache_prep_pre_commands: "rm -f /etc/resolv.conf || true"
-lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf -f"
+# lxc_cache_prep_pre_commands: "rm -f /etc/resolv.conf || true"
+# lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf -f"
 #  Above Added to fix an LXC bug, this should be fixed in releases > 17.0.3
 
 ## Security
