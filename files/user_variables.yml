@@ -31,9 +31,11 @@ install_method: source
 lxc_net_mtu: 1450
 bootstrap_host_aio_config: no
 
+keystone_service_internaluri_insecure: true
+
 lxc_cache_prep_timeout: 3600
-# lxc_cache_prep_pre_commands: "rm -f /etc/resolv.conf || true"
-# lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf -f"
+lxc_cache_prep_pre_commands: "rm -f /etc/resolv.conf || true"
+lxc_cache_prep_post_commands: "ln -s ../run/resolvconf/resolv.conf /etc/resolv.conf -f"
 #  Above Added to fix an LXC bug, this should be fixed in releases > 17.0.3
 
 ## Security
@@ -119,29 +121,29 @@ neutron_plugin_base:
 neutron_l3_ha: false
 
 
-### Following section copied from https://github.com/openstack/openstack-ansible/blob/master/etc/openstack_deploy/user_variables.yml
-## Environment variable setup:
-## This is used by apt-cacher-ng to download apt packages:
-## proxy_env_url: http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080/
-proxy_env_url: http://{{ gw_mgmt_ip }}:8080/
+# ### Following section copied from https://github.com/openstack/openstack-ansible/blob/master/etc/openstack_deploy/user_variables.yml
+# ## Environment variable setup:
+# ## This is used by apt-cacher-ng to download apt packages:
+# ## proxy_env_url: http://{{ hostvars['gw']['ansible_eth1']['ipv4']['address'] }}:8080/
+# proxy_env_url: http://{{ gw_mgmt_ip }}:8080/
 
-{% raw %}
-## This sets up a permanent environment, used during and after deployment:
-no_proxy_env: "localhost,127.0.0.1,{{ internal_lb_vip_address }},{{ external_lb_vip_address }},{% for host in groups['all_containers'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
-global_environment_variables:
-  HTTP_PROXY: "{{ proxy_env_url }}"
-  HTTPS_PROXY: "{{ proxy_env_url }}"
-  NO_PROXY: "{{ no_proxy_env }}"
-  http_proxy: "{{ proxy_env_url }}"
-  https_proxy: "{{ proxy_env_url }}"
-  no_proxy: "{{ no_proxy_env }}"
-
-## This is applied only during deployment, nothing is left after deployment is complete:
-# deployment_environment_variables:
+# {% raw %}
+# ## This sets up a permanent environment, used during and after deployment:
+# no_proxy_env: "localhost,127.0.0.1,{{ internal_lb_vip_address }},{{ external_lb_vip_address }},{% for host in groups['all_containers'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+# global_environment_variables:
+#   HTTP_PROXY: "{{ proxy_env_url }}"
+#   HTTPS_PROXY: "{{ proxy_env_url }}"
+#   NO_PROXY: "{{ no_proxy_env }}"
 #   http_proxy: "{{ proxy_env_url }}"
 #   https_proxy: "{{ proxy_env_url }}"
-#   no_proxy: "localhost,127.0.0.1,{{ internal_lb_vip_address }},{{ external_lb_vip_address }},{% for host in groups['keystone_all'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
-{% endraw %}
+#   no_proxy: "{{ no_proxy_env }}"
+
+# ## This is applied only during deployment, nothing is left after deployment is complete:
+# # deployment_environment_variables:
+# #   http_proxy: "{{ proxy_env_url }}"
+# #   https_proxy: "{{ proxy_env_url }}"
+# #   no_proxy: "localhost,127.0.0.1,{{ internal_lb_vip_address }},{{ external_lb_vip_address }},{% for host in groups['keystone_all'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+# {% endraw %}
 
 
 
