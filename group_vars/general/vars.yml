@@ -4,6 +4,7 @@ osa_repo: 'https://github.com/openstack/openstack-ansible.git'
 # osa_version: stable/rocky
 # osa_version: stable/queens
 osa_version: stable/pike # requires lxc_cache_prep_pre_commands and lxc_cache_prep_post_commands to be enabled in user_variables.yml
+# osa_version: 16.0.23 # requires lxc_cache_prep_pre_commands and lxc_cache_prep_post_commands to be enabled in user_variables.yml
 osa_destination: /opt/openstack-ansible
 git_force: yes
 
@@ -50,7 +51,7 @@ vpn_netmask: 255.255.240.0
 vpn_interface: br-flat
 
 # Status Mail Settings - values are stored in encrypted vault file
-send_mail: false
+send_mail: true
 subject_prefix: 'openstack-multa:'
 host: '{{ vault_host }}'
 port: '{{ vault_port }}'
